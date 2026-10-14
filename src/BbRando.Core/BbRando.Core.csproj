@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>BbRando.Core</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- SoulsFormats (JKAnderson) copiado do pacote do mod original; netstandard2.1, roda em Linux e Windows. -->
+    <Reference Include="SoulsFormats">
+      <HintPath>..\..\lib\SoulsFormats.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

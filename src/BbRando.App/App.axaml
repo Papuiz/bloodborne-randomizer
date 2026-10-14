@@ -1,0 +1,67 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="BbRando.App.App"
+             RequestedThemeVariant="Dark">
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Dark">
+          <Color x:Key="SystemAccentColor">#B3263A</Color>
+          <Color x:Key="SystemAccentColorLight1">#C9404F</Color>
+          <Color x:Key="SystemAccentColorLight2">#D85B68</Color>
+          <Color x:Key="SystemAccentColorDark1">#8E1C2C</Color>
+          <SolidColorBrush x:Key="PanelBrush" Color="#1E1B22" />
+          <SolidColorBrush x:Key="WindowBrush" Color="#141217" />
+          <SolidColorBrush x:Key="MutedBrush" Color="#A79FB0" />
+          <SolidColorBrush x:Key="GoldBrush" Color="#D9B46A" />
+          <SolidColorBrush x:Key="WarnBrush" Color="#E3A15B" />
+        </ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+    </ResourceDictionary>
+  </Application.Resources>
+
+  <Application.Styles>
+    <FluentTheme />
+    <Style Selector="TextBlock.title">
+      <Setter Property="FontSize" Value="26" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Foreground" Value="{DynamicResource GoldBrush}" />
+    </Style>
+    <Style Selector="TextBlock.h2">
+      <Setter Property="FontSize" Value="16" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Margin" Value="0,10,0,2" />
+      <Setter Property="Foreground" Value="{DynamicResource GoldBrush}" />
+    </Style>
+    <Style Selector="TextBlock.desc">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="Margin" Value="28,0,0,8" />
+    </Style>
+    <Style Selector="TextBlock.descflat">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="Margin" Value="0,0,0,8" />
+    </Style>
+    <Style Selector="TextBlock.warn">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="Foreground" Value="{DynamicResource WarnBrush}" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="Margin" Value="28,0,0,8" />
+    </Style>
+    <Style Selector="Border.card">
+      <Setter Property="Background" Value="{DynamicResource PanelBrush}" />
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="Padding" Value="16" />
+      <Setter Property="Margin" Value="0,0,0,12" />
+    </Style>
+    <Style Selector="Button.big">
+      <Setter Property="FontSize" Value="15" />
+      <Setter Property="Padding" Value="18,10" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+    </Style>
+  </Application.Styles>
+</Application>

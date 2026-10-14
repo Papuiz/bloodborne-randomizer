@@ -1,0 +1,282 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:BbRando.App.ViewModels"
+        x:Class="BbRando.App.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Title="Bloodborne Randomizer"
+        Width="980" Height="760" MinWidth="720" MinHeight="560"
+        Background="{DynamicResource WindowBrush}">
+
+  <DockPanel Margin="20,14,20,16">
+
+    <!-- Cabeçalho -->
+    <StackPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+      <TextBlock Classes="title" Text="Bloodborne Randomizer" />
+      <TextBlock Classes="descflat" Text="Randomiza inimigos e itens do Bloodborne. Roda no Linux e no Windows. Nada é alterado no jogo até você clicar em &quot;Aplicar no jogo&quot;." />
+    </StackPanel>
+
+    <!-- Rodapé: progresso -->
+    <StackPanel DockPanel.Dock="Bottom" Margin="0,10,0,0" Spacing="4">
+      <ProgressBar Value="{Binding ProgressValue}" Maximum="100" Height="6" />
+      <TextBlock Classes="descflat" Text="{Binding Status}" Margin="0" />
+    </StackPanel>
+
+    <TabControl>
+
+      <!-- ===================== INÍCIO ===================== -->
+      <TabItem Header="Início">
+        <ScrollViewer>
+          <StackPanel Margin="0,10,8,0">
+
+            <Border Classes="card">
+              <StackPanel>
+                <TextBlock Classes="h2" Text="Pastas" Margin="0,0,0,8" />
+
+                <TextBlock Text="Pasta do mod original (dvdroot_ps4 do Randomizer 5.2)" />
+                <TextBlock Classes="descflat" Text="Os arquivos-base vêm daqui. Ela só é lida, nunca alterada. Exemplo: Downloads/Randomizer/5.2/dvdroot_ps4" />
+                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,12">
+                  <TextBox Text="{Binding ModPath}" Watermark="Selecione a pasta dvdroot_ps4 do mod" />
+                  <Button Grid.Column="1" Content="Procurar..." Margin="8,0,0,0" Click="PickModFolder" />
+                </Grid>
+
+                <TextBlock Text="Pasta de saída" />
+                <TextBlock Classes="descflat" Text="Onde a randomização é gravada, junto com os logs. Use uma pasta vazia ou uma criada por este programa." />
+                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,12">
+                  <TextBox Text="{Binding OutputPath}" />
+                  <Button Grid.Column="1" Content="Procurar..." Margin="8,0,0,0" Click="PickOutputFolder" />
+                </Grid>
+
+                <TextBlock Text="Pasta do jogo (port)" />
+                <TextBlock Classes="descflat" Text="A pasta CUSA03173 (ou a dvdroot_ps4 dentro dela). Só é usada pelos botões &quot;Aplicar no jogo&quot; e &quot;Unrandomizer&quot;." />
+                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,12">
+                  <TextBox Text="{Binding GamePath}" Watermark="Ex.: ~/Games/Bloodborne/CUSA03173" />
+                  <Button Grid.Column="1" Content="Procurar..." Margin="8,0,0,0" Click="PickGameFolder" />
+                </Grid>
+
+                <TextBlock Text="Cópia original do jogo (opcional, para o Unrandomizer)" />
+                <TextBlock Classes="descflat" Text="Uma pasta ou um .zip com o jogo limpo. Com ela, o Unrandomizer também desfaz mods aplicados antes deste programa, como o randomizer antigo." />
+                <Grid ColumnDefinitions="*,Auto,Auto">
+                  <TextBox Text="{Binding VanillaPath}" Watermark="Ex.: ~/Games/Bloodborne.zip" />
+                  <Button Grid.Column="1" Content="Pasta..." Margin="8,0,0,0" Click="PickVanillaFolder" />
+                  <Button Grid.Column="2" Content=".zip..." Margin="8,0,0,0" Click="PickVanillaZip" />
+                </Grid>
+              </StackPanel>
+            </Border>
+
+            <Border Classes="card">
+              <StackPanel>
+                <TextBlock Classes="h2" Text="Seed" Margin="0,0,0,8" />
+                <TextBlock Classes="descflat" Text="A seed define o sorteio. A mesma seed com as mesmas opções gera sempre o mesmo jogo. Pode ser um número ou qualquer texto." />
+                <Grid ColumnDefinitions="*,Auto">
+                  <TextBox Text="{Binding SeedText}" />
+                  <Button Grid.Column="1" Content="Nova seed" Margin="8,0,0,0" Click="NewSeed" />
+                </Grid>
+
+                <TextBlock Text="Código compartilhável" Margin="0,14,0,0" />
+                <TextBlock Classes="descflat" Text="Inclui a seed e todas as opções. Envie para um amigo: colando este código, ele recebe exatamente o mesmo jogo (usando o mesmo pacote do mod)." />
+                <Grid ColumnDefinitions="*,Auto,Auto">
+                  <TextBox Text="{Binding SeedCode, Mode=OneWay}" IsReadOnly="True" FontFamily="monospace" />
+                  <Button Grid.Column="1" Content="Copiar" Margin="8,0,0,0" Click="CopySeedCode" />
+                  <Button Grid.Column="2" Content="Colar código..." Margin="8,0,0,0" Click="PasteSeedCode" />
+                </Grid>
+                <TextBlock x:Name="SeedMessage" Classes="warn" Margin="0,6,0,0" IsVisible="False" />
+              </StackPanel>
+            </Border>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+
+      <!-- ===================== INIMIGOS ===================== -->
+      <TabItem Header="Inimigos">
+        <ScrollViewer>
+          <StackPanel Margin="0,10,8,0">
+
+            <Border Classes="card">
+              <StackPanel>
+                <CheckBox Content="Randomizar inimigos" IsChecked="{Binding RandomizeEnemies}" FontWeight="SemiBold" />
+                <TextBlock Classes="desc" Text="Troca os inimigos comuns de todas as áreas por outros sorteados. Chefes de arena, NPCs e personagens de história nunca são trocados." />
+
+                <StackPanel IsEnabled="{Binding RandomizeEnemies}">
+                  <TextBlock Classes="h2" Text="Estabilidade (memória)" />
+
+                  <Grid ColumnDefinitions="220,*,90">
+                    <TextBlock Text="Limite por inimigo" VerticalAlignment="Center" />
+                    <Slider Grid.Column="1" Minimum="0.5" Maximum="10" Value="{Binding EnemyMemoryMultiplier}" />
+                    <TextBlock Grid.Column="2" Text="{Binding EnemyMemoryLabel}" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                  </Grid>
+                  <TextBlock Classes="descflat" Text="O novo inimigo pode pesar até N vezes o original. 1.0× é o mais estável; valores altos dão mais variedade e mais travamentos. Igual ao slider do mod original." />
+
+                  <Grid ColumnDefinitions="220,*,90">
+                    <TextBlock Text="Limite por mapa" VerticalAlignment="Center" />
+                    <Slider Grid.Column="1" Minimum="0" Maximum="5" Value="{Binding MapMemoryMultiplier}" />
+                    <TextBlock Grid.Column="2" Text="{Binding MapMemoryLabel}" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                  </Grid>
+                  <TextBlock Classes="descflat" Text="Novo: a soma de todos os tipos de inimigo de um mapa não passa de N vezes a do mapa original. Evita que muitos inimigos grandes se acumulem numa área. 0 = desligado." />
+
+                  <Grid ColumnDefinitions="220,*,90">
+                    <TextBlock Text="Tipos novos por mapa" VerticalAlignment="Center" />
+                    <Slider Grid.Column="1" Minimum="0" Maximum="60" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding MaxNewModelsPerMap}" />
+                    <TextBlock Grid.Column="2" Text="{Binding MaxNewModelsLabel}" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                  </Grid>
+                  <TextBlock Classes="descflat" Text="Novo: máximo de tipos de inimigo diferentes que podem entrar em cada mapa. Cada tipo novo é mais um modelo carregado na memória. 0 = sem limite." />
+
+                  <TextBlock Classes="h2" Text="Chefes" />
+                  <CheckBox Content="Modo swap: chefes trocam de arena entre si" IsChecked="{Binding SwapBosses}" FontWeight="SemiBold" />
+                  <TextBlock Classes="desc" Text="Cada chefe vai para a arena de outro, sem repetir: você enfrenta cada chefe uma única vez no jogo inteiro. A lista de quem está em cada arena fica em logs/inimigos.txt." />
+                  <StackPanel Margin="28,0,0,4" IsVisible="{Binding SwapBosses}">
+                    <CheckBox Content="Ajustar a força à arena" IsChecked="{Binding ScaleSwappedBosses}" />
+                    <TextBlock Classes="desc" Text="O chefe novo herda a vida, o escalonamento de dano e defesa, as almas e a recompensa do chefe original da arena. Sem isso, o Orphan of Kos no lugar do Cleric Beast seria quase impossível no começo do jogo." />
+                    <CheckBox Content="Incluir Gehrman e Moon Presence" IsChecked="{Binding SwapFinalBosses}" />
+                    <TextBlock Classes="desc" Text="Os chefes do final também entram na troca, e as lutas finais passam a ser contra outros chefes." />
+                    <CheckBox Content="Ajudantes das lutas em grupo viram estátuas" IsChecked="{Binding StatueHelpers}" />
+                    <TextBlock Classes="desc" Text="Quando um chefe entra numa luta em grupo (bruxas, sombras, Emissary), os outros membros viram estátuas com 2 de vida, que se quebram com um golpe. Assim a luta termina e nenhum chefe se repete." />
+                    <CheckBox Content="Trocar também os chefes das masmorras de cálice (entre si)" IsChecked="{Binding SwapChaliceBosses}" />
+                    <TextBlock Classes="desc" Text="Embaralha os chefes das masmorras principais entre as próprias masmorras. As masmorras já repetem chefes do jogo normal (Rom, Amygdala...)." />
+                    <TextBlock Classes="warn" Text="A barra de vida pode continuar mostrando o nome do chefe original da arena." />
+                  </StackPanel>
+                  <CheckBox Content="Incluir chefes menores e lutas em grupo" IsChecked="{Binding IncludeLesserBosses}" />
+                  <TextBlock Classes="desc" Text="Witch of Hemwick, Shadow of Yharnam, Celestial Emissary e One Reborn entram como um chefe só (no swap e na opção abaixo). Living Failures fica de fora, porque a luta pode não terminar." />
+                  <StackPanel IsEnabled="{Binding BossInsertEnabled}">
+                    <Grid ColumnDefinitions="220,*,90">
+                      <TextBlock Text="Chance de virar chefe" VerticalAlignment="Center" />
+                      <Slider Grid.Column="1" Minimum="0" Maximum="25" Value="{Binding BossChance}" />
+                      <TextBlock Grid.Column="2" Text="{Binding BossChanceLabel}" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                    </Grid>
+                    <TextBlock Classes="descflat" Text="Chance de cada inimigo comum virar um chefe. Respeita os limites de memória. Desligado no modo swap, para os chefes não se repetirem." />
+                    <CheckBox Content="Incluir chefes das masmorras de cálice" IsChecked="{Binding IncludeChaliceBosses}" />
+                    <TextBlock Classes="desc" Text="Os chefes das masmorras também podem aparecer no lugar de inimigos comuns." />
+                  </StackPanel>
+
+                  <TextBlock Classes="h2" Text="Masmorras de cálice" />
+                  <CheckBox Content="Incluir inimigos de cálice" IsChecked="{Binding IncludeChaliceEnemies}" />
+                  <TextBlock Classes="desc" Text="Os inimigos das masmorras entram no sorteio, e as masmorras principais também são randomizadas." />
+                  <Grid ColumnDefinitions="220,*,90" IsEnabled="{Binding IncludeChaliceEnemies}">
+                    <TextBlock Text="Chance de inimigo de cálice" VerticalAlignment="Center" />
+                    <Slider Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding ChaliceEnemyChance}" />
+                    <TextBlock Grid.Column="2" Text="{Binding ChaliceChanceLabel}" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                  </Grid>
+                  <TextBlock Classes="descflat" Text="No jogo principal, a chance de o inimigo sorteado vir das masmorras de cálice." />
+
+                  <TextBlock Classes="h2" Text="Outros" />
+                  <CheckBox Content="Proteger as mulheres do sino" IsChecked="{Binding ProtectBellMaidens}" />
+                  <TextBlock Classes="desc" Text="Não troca as mulheres que tocam o sino, para os pontos que geram inimigos continuarem funcionando." />
+                  <CheckBox Content="Nunca repetir o inimigo original" IsChecked="{Binding AvoidSameEnemy}" />
+                  <TextBlock Classes="desc" Text="Quando um inimigo é trocado, o novo é sempre de outro tipo." />
+                </StackPanel>
+              </StackPanel>
+            </Border>
+
+            <Expander Header="Chance de troca por área" HorizontalAlignment="Stretch" Margin="0,0,0,12" IsEnabled="{Binding RandomizeEnemies}">
+              <StackPanel>
+                <TextBlock Classes="descflat" Text="Porcentagem dos inimigos de cada área que serão trocados. Áreas pesadas vêm com valores menores, como no mod original." />
+                <ItemsControl ItemsSource="{Binding Areas}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:AreaRow">
+                      <Grid ColumnDefinitions="240,*,60" Margin="0,2" ToolTip.Tip="{Binding Description}">
+                        <TextBlock Text="{Binding Area.Name}" VerticalAlignment="Center" />
+                        <Slider Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding Chance}" />
+                        <TextBlock Grid.Column="2" Text="{Binding ChanceLabel}" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                      </Grid>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <Button Content="Voltar aos valores padrão" Margin="0,8,0,0" Click="ResetAreas" />
+              </StackPanel>
+            </Expander>
+
+            <Expander Header="Escolher inimigos (pesos no sorteio)" HorizontalAlignment="Stretch" Margin="0,0,0,12" IsEnabled="{Binding RandomizeEnemies}">
+              <StackPanel>
+                <TextBlock Classes="descflat" Text="Peso 0 = o inimigo nunca aparece. 1 = normal. Valores maiores aparecem com mais frequência. Para uma partida só com alguns inimigos, use &quot;Zerar visíveis&quot; e suba só os que quiser." />
+                <TextBlock Classes="descflat" Text="{Binding CatalogStatus}" Foreground="{DynamicResource GoldBrush}" />
+                <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto" Margin="0,0,0,8">
+                  <TextBox Text="{Binding EnemyFilter}" Watermark="Buscar por nome, modelo (c1000) ou área..." />
+                  <CheckBox Grid.Column="1" Content="Chefes" IsChecked="{Binding ShowBosses}" Margin="10,0,0,0" />
+                  <CheckBox Grid.Column="2" Content="Cálice" IsChecked="{Binding ShowChalice}" Margin="6,0,0,0" />
+                  <Button Grid.Column="3" Content="Visíveis = 1" Margin="8,0,0,0" Click="WeightsNormal" />
+                  <Button Grid.Column="4" Content="Zerar visíveis" Margin="8,0,0,0" Click="WeightsZero" />
+                </Grid>
+                <ItemsControl ItemsSource="{Binding VisibleEnemies}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:EnemyRow">
+                      <Grid ColumnDefinitions="*,200,60" Margin="0,3">
+                        <StackPanel VerticalAlignment="Center">
+                          <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
+                            <Border IsVisible="{Binding HasTag}" Background="#4A1F2A" CornerRadius="4" Padding="5,0">
+                              <TextBlock Text="{Binding Tag}" FontSize="10" VerticalAlignment="Center" />
+                            </Border>
+                          </StackPanel>
+                          <TextBlock Text="{Binding Subtitle}" FontSize="11" Foreground="{DynamicResource MutedBrush}" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                        <Slider Grid.Column="1" Minimum="0" Maximum="10" Value="{Binding Weight}" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="2" Text="{Binding WeightLabel}" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                      </Grid>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+            </Expander>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+
+      <!-- ===================== ITENS ===================== -->
+      <TabItem Header="Itens">
+        <ScrollViewer>
+          <StackPanel Margin="0,10,8,0">
+            <Border Classes="card">
+              <StackPanel>
+                <CheckBox Content="Randomizar itens do mapa" IsChecked="{Binding RandomizeItems}" FontWeight="SemiBold" />
+                <TextBlock Classes="desc" Text="Embaralha o que está nos cadáveres, no chão e nos baús. A lista completa de onde cada item foi parar fica em logs/itens.txt." />
+
+                <StackPanel IsEnabled="{Binding RandomizeItems}">
+                  <CheckBox Content="Só dentro da mesma área" IsChecked="{Binding ItemsWithinArea}" />
+                  <TextBlock Classes="desc" Text="Cada item continua na sua área original, só que em outro lugar. Bom para uma progressão parecida com a normal." />
+                  <CheckBox Content="Incluir itens da oficina" IsChecked="{Binding IncludeWorkshopItems}" />
+                  <TextBlock Classes="desc" Text="Inclui os itens do Sonho do Caçador e da oficina abandonada." />
+                  <CheckBox Content="Incluir itens-chave (chaves, emblemas, insígnias)" IsChecked="{Binding IncludeKeyItems}" />
+                  <TextBlock Classes="warn" Text="Cuidado: uma chave pode ir parar atrás da porta que ela abre e travar o progresso. Use o log de itens para encontrá-las." />
+                </StackPanel>
+              </StackPanel>
+            </Border>
+
+            <Border Classes="card">
+              <StackPanel>
+                <CheckBox Content="Embaralhar drops de inimigos" IsChecked="{Binding RandomizeEnemyDrops}" FontWeight="SemiBold" />
+                <TextBlock Classes="desc" Text="Os itens que os inimigos soltam ao morrer são trocados entre si. Itens-chave nunca são mexidos aqui (a não ser que a opção acima esteja ligada)." />
+              </StackPanel>
+            </Border>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+
+      <!-- ===================== GERAR ===================== -->
+      <TabItem Header="Gerar e aplicar">
+        <Grid RowDefinitions="Auto,*" Margin="0,10,8,0">
+          <Border Classes="card">
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto">
+              <StackPanel Margin="0,0,8,8">
+                <Button Classes="big accent" Content="1. Randomizar" Click="Randomize" IsEnabled="{Binding Idle}" />
+                <TextBlock Classes="descflat" Margin="0,4,0,0" Text="Gera os arquivos e os logs na pasta de saída. Não mexe no jogo." />
+              </StackPanel>
+              <StackPanel Grid.Column="1" Margin="8,0,0,8">
+                <Button Classes="big" Content="2. Aplicar no jogo" Click="Apply" IsEnabled="{Binding Idle}" />
+                <TextBlock Classes="descflat" Margin="0,4,0,0" Text="Copia a randomização para a pasta do jogo. Antes, guarda um backup de cada arquivo substituído." />
+              </StackPanel>
+              <StackPanel Grid.Row="1" Margin="0,0,8,0">
+                <Button Classes="big" Content="Abrir logs" Click="OpenLogs" IsEnabled="{Binding HasLogs}" />
+                <TextBlock Classes="descflat" Margin="0,4,0,0" Text="itens.txt: onde está cada item. inimigos.txt: o que mudou em cada área." />
+              </StackPanel>
+              <StackPanel Grid.Row="1" Grid.Column="1" Margin="8,0,0,0">
+                <Button Classes="big" Content="Unrandomizer (voltar ao normal)" Click="Unrandomize" IsEnabled="{Binding Idle}" Foreground="{DynamicResource WarnBrush}" />
+                <TextBlock Classes="descflat" Margin="0,4,0,0" Text="Restaura os arquivos originais do jogo. Seu save continua valendo: o mundo volta ao normal, mas os itens que você já pegou ficam com você." />
+              </StackPanel>
+            </Grid>
+          </Border>
+          <TextBox Grid.Row="1" Text="{Binding Log}" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True"
+                   FontFamily="monospace" FontSize="12" x:Name="LogBox" />
+        </Grid>
+      </TabItem>
+    </TabControl>
+  </DockPanel>
+</Window>
