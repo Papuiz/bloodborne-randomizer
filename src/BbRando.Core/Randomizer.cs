@@ -7,19 +7,19 @@ public sealed record Progress(double Percent, string Message);
 public sealed record RandomizeResult(
     string OutputDvdRoot, string LogDir, string SeedCode, int EnemiesChanged, int ItemsMoved, IReadOnlyList<string> Warnings);
 
-/// <summary>Executa a randomização completa: lê o pacote do mod e grava tudo numa pasta de saída separada.</summary>
+/// <summary>Executa a randomização completa: lê a fonte (jogo limpo ou pacote do mod) e grava numa pasta de saída separada.</summary>
 public static class Randomizer
 {
     /// <summary>Arquivo que marca uma pasta como saída deste programa (só essas são limpas automaticamente).</summary>
     public const string OutputMarker = ".bloodborne-randomizer-output";
 
-    public static RandomizeResult Run(string modPackDir, string outputDir, RandomizerSettings settings,
+    public static RandomizeResult Run(string sourcePath, string outputDir, RandomizerSettings settings,
         IProgress<Progress>? progress = null, CancellationToken cancel = default)
     {
         void Report(double p, string m) => progress?.Report(new Progress(p, m));
 
-        var pack = new ModPack(modPackDir);
-        var outputDvd = PrepareOutput(pack, outputDir);
+        using var pack = GameSource.Open(sourcePath, settings.Source);
+        var outputDvd = PrepareOutput(pack.Description, outputDir);
 
         Report(2, "Lendo textos e parâmetros do jogo...");
         var text = new GameText(pack);
@@ -28,6 +28,12 @@ public static class Randomizer
         Report(8, "Lendo mapas...");
         var maps = LoadMaps(pack, cancel);
         cancel.ThrowIfCancellationRequested();
+
+        // Jogo limpo: aplica os ajustes do mod original guardados como dados (no modo legado eles já
+        // estão nos arquivos do pacote).
+        var patches = pack.Mode == SourceMode.Vanilla ? ModPatchSet.Embedded() : new ModPatchSet();
+        patches.ApplyParams(param);
+        patches.ApplyMaps(maps);
 
         Report(25, "Montando a lista de inimigos...");
         // O catálogo é lido dos mapas ainda intactos, antes de qualquer troca.
@@ -43,6 +49,8 @@ public static class Randomizer
             items.RandomizeDrops(param);
         }
 
+        // Escalonamento lido dos mapas antes das trocas (cada mapa: o efeito dos inimigos nativos).
+        var scaling = new AreaScaling(param, maps);
         var bosses = new BossSwapper(settings, param, catalog.DisplayName);
         if (settings.SwapBosses)
         {
@@ -51,7 +59,7 @@ public static class Randomizer
             warnings.AddRange(bosses.Warnings);
         }
 
-        var enemies = new EnemyRandomizer(catalog, settings, text) { ExcludedModels = bosses.SwappedModels };
+        var enemies = new EnemyRandomizer(catalog, settings, text) { ExcludedModels = bosses.SwappedModels, Scaling = scaling };
         if (settings.RandomizeEnemies)
         {
             var targets = maps.Values.Where(m => m.Def.EnemyTarget).ToList();
@@ -72,21 +80,25 @@ public static class Randomizer
         foreach (var map in maps.Values.Where(m => m.Dirty))
             ModelTable.EnsureModels(map, catalog, warnings);
 
-        Report(70, "Copiando arquivos do mod...");
-        var written = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        if (pack is ModPack modPack)
         {
-            "param/gameparam/gameparam.parambnd.dcx",
-        };
-        foreach (var map in maps.Values.Where(m => m.Dirty))
-            written.Add(map.Def.RelativePath);
-        foreach (var rel in pack.GameFiles())
-        {
-            cancel.ThrowIfCancellationRequested();
-            if (written.Contains(rel))
-                continue;
-            var dest = Path.Combine(outputDvd, rel.Replace('/', Path.DirectorySeparatorChar));
-            Directory.CreateDirectory(Path.GetDirectoryName(dest)!);
-            File.Copy(pack.Resolve(rel), dest, overwrite: true);
+            // Modo legado: os arquivos que os autores alteraram (eventos, IA, efeitos...) vão junto.
+            Report(70, "Copiando arquivos do mod...");
+            var written = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "param/gameparam/gameparam.parambnd.dcx",
+            };
+            foreach (var map in maps.Values.Where(m => m.Dirty))
+                written.Add(map.Def.RelativePath);
+            foreach (var rel in modPack.GameFiles())
+            {
+                cancel.ThrowIfCancellationRequested();
+                if (written.Contains(rel))
+                    continue;
+                var dest = Path.Combine(outputDvd, rel.Replace('/', Path.DirectorySeparatorChar));
+                Directory.CreateDirectory(Path.GetDirectoryName(dest)!);
+                File.Copy(modPack.Resolve(rel), dest, overwrite: true);
+            }
         }
 
         Report(80, "Gravando mapas...");
@@ -95,15 +107,26 @@ public static class Randomizer
             cancel.ThrowIfCancellationRequested();
             map.Write(outputDvd);
         }
-        Report(92, "Gravando parâmetros...");
+        Report(88, "Gravando parâmetros...");
         param.Write(Path.Combine(outputDvd, "param", "gameparam", "gameparam.parambnd.dcx"));
+
+        if (pack.Mode == SourceMode.Vanilla)
+        {
+            Report(90, "Gravando eventos e textos...");
+            patches.WriteEvents(pack, outputDvd);
+            patches.WriteTexts(pack, outputDvd);
+            Report(92, "Juntando os scripts de IA...");
+            AiScripts.Write(pack, patches, outputDvd);
+            Report(94, "Juntando os efeitos visuais...");
+            SfxMerge.Write(pack, outputDvd);
+        }
 
         Report(96, "Gravando logs...");
         var seedCode = settings.ToSeedCode();
         var logDir = Path.Combine(outputDir, "logs");
         Directory.CreateDirectory(logDir);
         SpoilerLog.WriteItems(Path.Combine(logDir, "itens.txt"), seedCode, items);
-        SpoilerLog.WriteEnemies(Path.Combine(logDir, "inimigos.txt"), seedCode, enemies, bosses, warnings);
+        SpoilerLog.WriteEnemies(Path.Combine(logDir, "inimigos.txt"), seedCode, enemies, bosses, settings.ScaleEnemiesToArea ? scaling : null, warnings);
         File.WriteAllText(Path.Combine(outputDir, "seed.txt"), seedCode + Environment.NewLine);
         File.WriteAllText(Path.Combine(outputDir, "configuracao.json"), settings.ToJson());
 
@@ -111,7 +134,7 @@ public static class Randomizer
         return new RandomizeResult(outputDvd, logDir, seedCode, enemies.Swaps.Count, items.Placements.Count, warnings);
     }
 
-    static Dictionary<string, MapFile> LoadMaps(ModPack pack, CancellationToken cancel)
+    static Dictionary<string, MapFile> LoadMaps(IGameSource pack, CancellationToken cancel)
     {
         var maps = new Dictionary<string, MapFile>();
         foreach (var def in GameData.Maps)
@@ -124,9 +147,9 @@ public static class Randomizer
     }
 
     /// <summary>Lê só o catálogo de inimigos (para montar a lista da interface).</summary>
-    public static EnemyCatalog LoadCatalog(string modPackDir)
+    public static EnemyCatalog LoadCatalog(string sourcePath, SourceMode mode)
     {
-        var pack = new ModPack(modPackDir);
+        using var pack = GameSource.Open(sourcePath, mode);
         var text = new GameText(pack);
         var param = new ParamBundle(pack);
         return new EnemyCatalog(pack, param, text, LoadMaps(pack, default));
@@ -136,11 +159,11 @@ public static class Randomizer
     /// Cria/limpa a pasta de saída. Por segurança, só apaga o conteúdo se a pasta estiver vazia
     /// ou tiver sido criada por este programa.
     /// </summary>
-    static string PrepareOutput(ModPack pack, string outputDir)
+    static string PrepareOutput(string sourceRoot, string outputDir)
     {
         outputDir = Path.GetFullPath(outputDir);
-        if (IsInside(outputDir, pack.Root) || IsInside(pack.Root, outputDir))
-            throw new InvalidOperationException("A pasta de saída não pode ficar dentro da pasta do mod (nem conter ela).");
+        if (IsInside(outputDir, sourceRoot) || IsInside(sourceRoot, outputDir))
+            throw new InvalidOperationException("A pasta de saída não pode ficar dentro da pasta de origem (nem conter ela).");
         if (Directory.Exists(outputDir) && Directory.EnumerateFileSystemEntries(outputDir).Any()
             && !File.Exists(Path.Combine(outputDir, OutputMarker)))
             throw new InvalidOperationException(
@@ -207,7 +230,7 @@ static class SpoilerLog
 
     static string Label(EnemyKind? k) => k == null ? "?" : k.Name == k.Model ? k.Model : $"{k.Name} ({k.Model})";
 
-    public static void WriteEnemies(string path, string seedCode, EnemyRandomizer enemies, BossSwapper bosses, List<string> warnings)
+    public static void WriteEnemies(string path, string seedCode, EnemyRandomizer enemies, BossSwapper bosses, AreaScaling? scaling, List<string> warnings)
     {
         var sb = new StringBuilder();
         sb.AppendLine("BLOODBORNE RANDOMIZER — INIMIGOS");
@@ -229,6 +252,13 @@ static class SpoilerLog
             sb.AppendLine($"--- {area.Key} ---");
             foreach (var s in area)
                 sb.AppendLine($"    {(s.BecameBoss ? "★ " : "")}{Label(s.Old)}  →  {Label(s.New)}    {(s.Where.Place != s.Where.Area ? s.Where.Place : null)} [{s.Where.MapId} {s.PartName}]");
+            sb.AppendLine();
+        }
+        if (scaling != null)
+        {
+            sb.AppendLine("--- Força de reserva por mapa (usada quando o inimigo substituído não tem escalonamento) ---");
+            foreach (var (map, scale) in scaling.Table.OrderBy(kv => kv.Key))
+                sb.AppendLine($"    {map}: SpEffect {scale.Area} (NG+ {scale.NewGame})");
             sb.AppendLine();
         }
         if (warnings.Count > 0)

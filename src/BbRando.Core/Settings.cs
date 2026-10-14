@@ -13,6 +13,9 @@ public sealed class RandomizerSettings
 {
     public ulong Seed { get; set; }
 
+    /// <summary>De onde vêm os arquivos-base. Faz parte do código de seed (o resultado depende disso).</summary>
+    public SourceMode Source { get; set; } = SourceMode.Vanilla;
+
     // ---- Inimigos ----
     public bool RandomizeEnemies { get; set; } = true;
     /// <summary>Limite de memória por inimigo: o novo inimigo pode pesar até N× o original. 10 = sem limite.</summary>
@@ -34,6 +37,8 @@ public sealed class RandomizerSettings
     public bool ProtectBellMaidens { get; set; } = true;
     /// <summary>Peso de cada modelo no sorteio (0 = nunca aparece, 1 = normal, até 10). Ausente = 1.</summary>
     public Dictionary<string, double> EnemyWeights { get; set; } = new();
+    /// <summary>Inimigo levado para outra área recebe a força (escalonamento) da área de destino.</summary>
+    public bool ScaleEnemiesToArea { get; set; } = true;
     /// <summary>Evita escolher o mesmo inimigo que já estava no lugar.</summary>
     public bool AvoidSameEnemy { get; set; } = true;
 
@@ -67,7 +72,9 @@ public sealed class RandomizerSettings
 
     // ---- Código de seed ----
 
-    const string Prefix = "BBR1-";
+    const string Prefix = "BBR2-";
+    /// <summary>Códigos antigos: sempre do modo "pacote do mod", sem escalonamento por área.</summary>
+    const string LegacyPrefix = "BBR1-";
 
     static readonly JsonSerializerOptions Json = new()
     {
@@ -105,7 +112,8 @@ public sealed class RandomizerSettings
     public static RandomizerSettings FromSeedCode(string code, RandomizerSettings current)
     {
         code = code.Trim();
-        if (!code.StartsWith(Prefix, StringComparison.OrdinalIgnoreCase))
+        var legacy = code.StartsWith(LegacyPrefix, StringComparison.OrdinalIgnoreCase);
+        if (!legacy && !code.StartsWith(Prefix, StringComparison.OrdinalIgnoreCase))
         {
             var copy = current.Clone();
             copy.Seed = SeedFromText(code);
@@ -115,7 +123,15 @@ public sealed class RandomizerSettings
         b64 = b64.PadRight(b64.Length + (4 - b64.Length % 4) % 4, '=');
         using var input = new DeflateStream(new MemoryStream(Convert.FromBase64String(b64)), CompressionMode.Decompress);
         using var reader = new StreamReader(input, Encoding.UTF8);
-        var settings = FromJson(reader.ReadToEnd());
+        var json = reader.ReadToEnd();
+        var settings = FromJson(json);
+        if (legacy)
+        {
+            // Opções que não existiam no BBR1 assumem o comportamento da época.
+            settings.Source = SourceMode.ModPack;
+            if (!json.Contains($"\"{nameof(ScaleEnemiesToArea)}\"", StringComparison.Ordinal))
+                settings.ScaleEnemiesToArea = false;
+        }
         // Áreas ausentes no código usam o padrão.
         foreach (var area in GameData.Areas)
             settings.AreaChance.TryAdd(area.Id, area.DefaultChance);

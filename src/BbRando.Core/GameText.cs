@@ -11,7 +11,7 @@ public sealed class GameText
 
     readonly Dictionary<int, Dictionary<int, string>> _fmgs = new();
 
-    public GameText(ModPack pack)
+    public GameText(IGameSource pack)
     {
         foreach (var lang in new[] { "engus", "enggb" })
         {
@@ -20,7 +20,7 @@ public sealed class GameText
                 var rel = $"msg/{lang}/{bndName}";
                 if (!pack.Exists(rel))
                     continue;
-                foreach (var file in BND4.Read(pack.Resolve(rel)).Files)
+                foreach (var file in BND4.Read(pack.ReadBytes(rel)).Files)
                 {
                     if (_fmgs.ContainsKey(file.ID))
                         continue;

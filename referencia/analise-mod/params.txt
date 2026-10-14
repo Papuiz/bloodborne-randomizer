@@ -1,0 +1,482 @@
+=== ItemLotParam: +0 linhas, -0, 1 alteradas
+  ~ 101552150 宝死体_ご褒美【レベル5_ローラン】2F　候補6: lotItemId01 900→1500, lotItemNum01 2→1
+=== NpcParam: +25334 linhas, -0, 807 alteradas
+  + IDs 900000000–900024241 (24242)
+  + IDs 920000001–920000279 (279)
+  + IDs 992097001–992097004 (4)
+  + IDs 992097006–992097011 (6)
+  + IDs 992097013–992097017 (5)
+  + IDs 992097019–992097024 (6)
+  + IDs 992097480–992097487 (8)
+  + IDs 992117001–992117004 (4)
+  + IDs 992117006–992117011 (6)
+  + IDs 992117013–992117017 (5)
+  + IDs 992117019–992117024 (6)
+  + IDs 992117480–992117487 (8)
+  + IDs 992127001–992127004 (4)
+  + IDs 992127006–992127011 (6)
+  + IDs 992127013–992127017 (5)
+  + IDs 992127019–992127024 (6)
+  + IDs 992127480–992127487 (8)
+  + IDs 992137001–992137004 (4)
+  + IDs 992137006–992137011 (6)
+  + IDs 992137013–992137017 (5)
+  + IDs 992137019–992137024 (6)
+  + IDs 992137480–992137487 (8)
+  + IDs 992157001–992157004 (4)
+  + IDs 992157006–992157011 (6)
+  + IDs 992157013–992157017 (5)
+  + IDs 992157019–992157024 (6)
+  + IDs 992157480–992157487 (8)
+  + IDs 992167001–992167004 (4)
+  + IDs 992167006–992167011 (6)
+  + IDs 992167013–992167017 (5)
+  + IDs 992167019–992167024 (6)
+  + IDs 992167480–992167487 (8)
+  + IDs 992177001–992177004 (4)
+  + IDs 992177006–992177011 (6)
+  + IDs 992177013–992177017 (5)
+  + IDs 992177019–992177024 (6)
+  + IDs 992177480–992177487 (8)
+  + IDs 992187001–992187004 (4)
+  + IDs 992187006–992187011 (6)
+  + IDs 992187013–992187017 (5)
+  + IDs 992187019–992187024 (6)
+  + IDs 992187480–992187487 (8)
+  + IDs 992327001–992327004 (4)
+  + IDs 992327006–992327011 (6)
+  + IDs 992327013–992327017 (5)
+  + IDs 992327019–992327024 (6)
+  + IDs 992327480–992327487 (8)
+  + IDs 992517001–992517004 (4)
+  + IDs 992517006–992517011 (6)
+  + IDs 992517013–992517017 (5)
+  + IDs 992517019–992517024 (6)
+  + IDs 992517480–992517487 (8)
+  + IDs 992717001–992717004 (4)
+  + IDs 992717006–992717011 (6)
+  + IDs 992717013–992717017 (5)
+  + IDs 992717019–992717024 (6)
+  + IDs 992717480–992717487 (8)
+  + IDs 992727001–992727004 (4)
+  + IDs 992727006–992727011 (6)
+  + IDs 992727013–992727017 (5)
+  + IDs 992727019–992727024 (6)
+  + IDs 992727481–992727487 (7)
+  + IDs 994037001–994037004 (4)
+  + IDs 994037006–994037011 (6)
+  + IDs 994037013–994037017 (5)
+  + IDs 994037019–994037024 (6)
+  + IDs 994037480–994037487 (8)
+  + IDs 994507001–994507004 (4)
+  + IDs 994507006–994507011 (6)
+  + IDs 994507013–994507017 (5)
+  + IDs 994507019–994507024 (6)
+  + IDs 994507480–994507487 (8)
+  + IDs 994517001–994517004 (4)
+  + IDs 994517006–994517011 (6)
+  + IDs 994517013–994517017 (5)
+  + IDs 994517019–994517024 (6)
+  + IDs 994517480–994517487 (8)
+  + IDs 994527001–994527004 (4)
+  + IDs 994527006–994527011 (6)
+  + IDs 994527013–994527017 (5)
+  + IDs 994527019–994527024 (6)
+  + IDs 994527480–994527487 (8)
+  + IDs 994537001–994537004 (4)
+  + IDs 994537006–994537011 (6)
+  + IDs 994537013–994537017 (5)
+  + IDs 994537019–994537024 (6)
+  + IDs 994537480–994537487 (8)
+  + IDs 994547001–994547004 (4)
+  + IDs 994547006–994547011 (6)
+  + IDs 994547013–994547017 (5)
+  + IDs 994547019–994547024 (6)
+  + IDs 994547480–994547487 (8)
+  + IDs 995007001–995007004 (4)
+  + IDs 995007006–995007017 (12)
+  + IDs 995007019–995007024 (6)
+  + IDs 995007480–995007487 (8)
+  + IDs 995027001–995027004 (4)
+  + IDs 995027006–995027011 (6)
+  + IDs 995027013–995027017 (5)
+  + IDs 995027019–995027024 (6)
+  + IDs 995027480–995027487 (8)
+  + IDs 995077001–995077004 (4)
+  + IDs 995077006–995077011 (6)
+  + IDs 995077013–995077017 (5)
+  + IDs 995077019–995077024 (6)
+  + IDs 995077480–995077487 (8)
+  + IDs 995087001–995087004 (4)
+  + IDs 995087006–995087011 (6)
+  + IDs 995087013–995087017 (5)
+  + IDs 995087019–995087024 (6)
+  + IDs 995087480–995087487 (8)
+  + IDs 995107001–995107004 (4)
+  + IDs 995107006–995107011 (6)
+  + IDs 995107013–995107017 (5)
+  + IDs 995107019–995107024 (6)
+  + IDs 995107480–995107487 (8)
+  + IDs 995127001–995127004 (4)
+  + IDs 995127006–995127011 (6)
+  + IDs 995127013–995127017 (5)
+  + IDs 995127019–995127024 (6)
+  + IDs 995127480–995127487 (8)
+  + IDs 995407001–995407004 (4)
+  + IDs 995407006
+  + IDs 995407008–995407011 (4)
+  + IDs 995407013–995407017 (5)
+  + IDs 995407019–995407024 (6)
+  + IDs 995407480–995407487 (8)
+  + IDs 995517001–995517004 (4)
+  + IDs 995517006–995517011 (6)
+  + IDs 995517013–995517017 (5)
+  + IDs 995517019–995517024 (6)
+  + IDs 995517480–995517487 (8)
+  + IDs 998057001–998057004 (4)
+  + IDs 998057006–998057011 (6)
+  + IDs 998057013–998057017 (5)
+  + IDs 998057019–998057024 (6)
+  + IDs 998057480–998057487 (8)
+  + IDs 999999001–999999031 (31)
+  ~ 100010 猟犬　聖堂街C: spEffectID6 7016→7487
+  ~ 100020 猟犬　聖堂街B: spEffectID6 7004→7487
+  ~ 100021 猟犬　聖堂街B　最初の猟犬: spEffectID6 7004→7487
+  ~ 100060 猟犬　廃墟: spEffectID6 7004→7487
+  ~ 100100 腐れ猟犬　生贄: spEffectID6 7015→7487
+  ~ 105220 さまよう寡婦（侵入PC召喚）　墓地街: spEffectID6 7008→7487
+  ~ 105230 さまよう寡婦（侵入PC召喚）　廃墟: spEffectID6 7004→7487
+  ~ 105240 さまよう寡婦（侵入PC召喚）　聖堂街A: spEffectID6 7006→7487
+  ~ 105241 さまよう寡婦（侵入PC召喚）　聖堂街B: spEffectID6 7002→7487
+  ~ 105242 さまよう寡婦（侵入PC召喚）　聖堂街C: spEffectID6 7016→7487
+  ~ 105250 さまよう寡婦（侵入PC召喚）　古城: spEffectID6 7014→7487
+  ~ 105260 さまよう寡婦（侵入PC召喚）　トラップロード: spEffectID6 7019→7487
+  ~ 105270 さまよう寡婦（侵入PC召喚）　森: spEffectID6 7010→7487
+  ~ 105280 さまよう寡婦（侵入PC召喚）　生贄: spEffectID6 7015→7487
+  ~ 105320 さまよう寡婦（侵入PC召喚）　大学: spEffectID6 7013→7487
+  ~ 105330 さまよう寡婦（侵入PC召喚）　故郷: spEffectID6 7011→7487
+  ~ 105340 さまよう寡婦（侵入PC召喚）　聖堂街D: spEffectID6 7480→7487
+  ~ 105350 さまよう寡婦（侵入PC召喚）　時計塔: spEffectID6 7482→7487
+  ~ 105360 さまよう寡婦（侵入PC召喚）　漁村: spEffectID6 7485→7487
+  ~ 105800 さまよう寡婦　生贄: spEffectID6 7015→7487
+  ~ 105810 さまよう寡婦　生贄　ボスおとも: spEffectID6 7015→7487
+  ~ 106020 脳喰らい 投げ　聖堂街C: spEffectID6 7016→7487
+  ~ 106021 脳喰らい 投げ　聖堂街C: spEffectID6 7007→7487
+  ~ 106030 脳喰らい　聖堂街B: spEffectID6 7015→7487
+  ~ 106101 脳喰らい　聖堂街A・中盤: spEffectID6 7024→7487
+  ~ 106200 脳喰らい　大学　強敵: spEffectID6 7015→7487
+  ~ 109000 異形ビースト　廃墟　警戒行動なし: spEffectID6 7004→7487
+  ~ 109003 異形ビースト　廃墟　なめらか巡回無視: spEffectID6 7004→7487
+  ~ 109010 異形ビースト　廃墟　スローキャラ: spEffectID6 7004→7487
+  ~ 109100 異形ビースト　会話用_感染者の乞食　警戒行動なし: spEffectID6 7023→7487
+  ~ 109800 異形ビースト　廃墟　常時感染: spEffectID6 7004→7487
+  ~ 110010 下水ネズミ　聖堂街B　腫瘍全なし: spEffectID6 7003→7487
+  ~ 110350 下水ネズミ　時計塔　光る目: spEffectID6 7482→7487
+  ~ 110351 下水ネズミ　時計塔　なめらか巡回無視: spEffectID6 7482→7487
+  ~ 110352 下水ネズミ　時計塔　光る目　待機を挟む巡回: spEffectID6 7482→7487
+  ~ 111010 クモ男パッチ_大学: spEffectID6 7013→7487
+  ~ 111012 クモ男パッチ_故郷: spEffectID6 7011→7487
+  ~ 111600 死と闇の眷属　トラップロード: spEffectID6 7019→7487
+  ~ 111610 死と闇の眷属　首なし　トラップロード: spEffectID6 7019→7487
+  ~ 112070 水死体ビースト　森【街人】: spEffectID6 7010→7487
+  ~ 112071 水死体ビースト　森【獣】: spEffectID6 7010→7487
+  ~ 112400 水死体ビースト【貧弱】　聖堂街_Ｂ: spEffectID6 7003→7487
+  ~ 112401 水死体ビースト【青年】　聖堂街_Ｂ: spEffectID6 7003→7487
+  ~ 112402 水死体ビースト【街人】　聖堂街_Ｂ: spEffectID6 7003→7487
+  ~ 114000 狂信者の獣　墓地街: spEffectID6 7008→7487
+  ~ 117000 屍肉烏　墓地街: spEffectID6 7008→7487
+  ~ 117070 屍肉烏　森: spEffectID6 7010→7487
+  ~ 117100 屍肉烏　廃墟: spEffectID6 7004→7487
+  ~ 117300 屍肉烏　聖堂街A: spEffectID6 7023→7487
+  ~ 117301 屍肉烏　聖堂街A・中盤: spEffectID6 7024→7487
+  ~ 117350 屍肉烏　時計塔: spEffectID6 7482→7487
+  ~ 117351 屍肉烏　時計塔_カレル持ち: spEffectID6 7482→7487
+  ~ 117400 屍肉烏　聖堂街B: spEffectID6 7001→7487
+  ~ 117450 屍肉烏　聖堂街C・後半: spEffectID6 7016→7487
+  ~ 117460 屍肉烏　聖堂街C・前半: spEffectID6 7007→7487
+  ~ 117600 屍肉烏　トラップロード　犬頭: spEffectID6 7020→7487
+  ~ 117900 屍肉烏　聖堂街D: spEffectID6 7480→7487
+  ~ 118010 さまよう狂気(小)　聖堂街A・生贄接続: spEffectID6 7023→7487
+  ~ 118011 さまよう狂気(小)　聖堂街A: spEffectID6 7023→7487
+  ~ 118012 さまよう狂気(小)　聖堂街A・生贄接続: spEffectID6 7023→7487
+  ~ 118013 さまよう狂気(小)　聖堂街A: spEffectID6 7007→7487
+  ~ 118014 さまよう狂気(小)　聖堂街A・生贄接続: spEffectID6 7023→7487
+  ~ 118015 さまよう狂気(小)　聖堂街A・生贄接続: spEffectID6 7023→7487
+  ~ 118020 さまよう狂気(小)　廃墟00: spEffectID6 7004→7487
+  ~ 118021 さまよう狂気(小)　廃墟01: spEffectID6 7004→7487
+  ~ 118022 さまよう狂気(小)　廃墟02: spEffectID6 7004→7487
+  ~ 118030 さまよう狂気(小)　生贄の街 初回: spEffectID6 7009→7487
+  ~ 118040 さまよう狂気(小)　墓地街00: spEffectID6 7008→7487
+  ~ 118041 さまよう狂気(小)　墓地街01: spEffectID6 7008→7487
+  ~ 118052 さまよう狂気(小)　森: spEffectID6 7010→7487
+  ~ 118070 さまよう狂気(小)　聖堂街C: spEffectID6 7007→7487
+  ~ 118082 さまよう狂気(小)　古城　02: spEffectID6 7014→7487
+  ~ 118090 さまよう狂気(小)　生贄の街　00: spEffectID6 7015→7487
+  ~ 118091 さまよう狂気(小)　生贄の街　01: spEffectID6 7015→7487
+  ~ 118092 さまよう狂気(小)　生贄の街　02: spEffectID6 7015→7487
+  ~ 118100 さまよう狂気(小)　トラップロード　00: spEffectID6 7019→7487
+  ~ 118101 さまよう狂気(小)　トラップロード　01: spEffectID6 7019→7487
+  ~ 118103 さまよう狂気(小)　トラップロード　03: spEffectID6 7019→7487
+  ~ 118110 さまよう狂気(小)　故郷00: spEffectID6 7011→7487
+  ~ 118111 さまよう狂気(小)　故郷01: spEffectID6 7011→7487
+  ~ 118112 さまよう狂気(小)　故郷02: spEffectID6 7011→7487
+  ~ 118113 さまよう狂気(小)　故郷03: spEffectID6 7011→7487
+  ~ 118115 さまよう狂気(小)　故郷05: spEffectID6 7011→7487
+  ~ 118116 さまよう狂気(小)　故郷06: spEffectID6 7011→7487
+  ~ 118118 さまよう狂気(小)　故郷08: spEffectID6 7011→7487
+  ~ 118120 さまよう狂気(小)　故郷10: spEffectID6 7011→7487
+  ~ 118122 さまよう狂気(小)　故郷12: spEffectID6 7011→7487
+  ~ 118124 さまよう狂気(小)　故郷14: spEffectID6 7011→7487
+  ~ 118126 さまよう狂気(小)　故郷16: spEffectID6 7011→7487
+  ~ 118127 さまよう狂気(小)　故郷17: spEffectID6 7011→7487
+  ~ 118129 さまよう狂気(小)　故郷19: spEffectID6 7011→7487
+  ~ 118130 さまよう狂気(小)　故郷20: spEffectID6 7011→7487
+  ~ 118131 さまよう狂気(小)　故郷21: spEffectID6 7011→7487
+  ~ 118132 さまよう狂気(小)　故郷22: spEffectID6 7011→7487
+  ~ 118134 さまよう狂気(小)　故郷24: spEffectID6 7029→7487
+  ~ 118135 さまよう狂気(小)　故郷25: spEffectID6 7029→7487
+  ~ 118136 さまよう狂気(小)　故郷26: spEffectID6 7029→7487
+  ~ 118139 さまよう狂気(小)　故郷29: spEffectID6 7011→7487
+  ~ 118700 さまよう狂気(小)　聖堂街D　00: spEffectID6 7480→7487
+  ~ 118701 さまよう狂気(小)　聖堂街D　01: spEffectID6 7480→7487
+  ~ 118800 さまよう狂気(小)　時計塔　00: spEffectID6 7482→7487
+  ~ 118801 さまよう狂気(小)　時計塔　01: spEffectID6 7482→7487
+  ~ 118802 さまよう狂気(小)　時計塔　02: spEffectID6 7482→7487
+  ~ 118900 さまよう狂気(小)　漁村　00: spEffectID6 7485→7487
+  ~ 119002 さまよう狂気(中)　故郷02: spEffectID6 7011→7487
+  ~ 119004 さまよう狂気(中)　故郷04: spEffectID6 7011→7487
+  ~ 119005 さまよう狂気(中)　故郷05: spEffectID6 7029→7487
+  ~ 119007 さまよう狂気(中)　故郷07: spEffectID6 7029→7487
+  ~ 119009 さまよう狂気(中)　故郷09: spEffectID6 7029→7487
+  ~ 122000 幼生オオコウモリ　古城: spEffectID6 7014→7487
+  ~ 122002 幼生オオコウモリ　強化版　古城: spEffectID6 7015→7487
+  ~ 124080 狂犬　生贄初回: spEffectID6 7009→7487
+  ~ 124400 狂犬　聖堂街B: spEffectID6 7001→7487
+  ~ 124401 狂犬　聖堂街B　檻の中用（出てこないことを想定）: spEffectID6 7001→7487
+  ~ 124410 狂犬　聖堂街A・序盤: spEffectID6 7023→7487
+  ~ 124412 狂犬　聖堂街A・後半: spEffectID6 7006→7487
+  ~ 124500 狂犬　森: spEffectID6 7010→7487
+  ~ 124501 狂犬　森　檻の中用: spEffectID6 7010→7487
+  ~ 124600 狂犬　トラップロード　烏頭: spEffectID6 7019→7487
+  ~ 124700 狂犬　聖堂街AC接続: spEffectID6 7007→7487
+  ~ 124800 狂犬焼死体　生贄: spEffectID6 7015→7487
+  ~ 124910 狂犬　聖堂街D: spEffectID6 7480→7487
+  ~ 125001 蛇玉（子）　通常カラー/2本太い: spEffectID6 7010→7487
+  ~ 125002 蛇玉（子）　通常カラー/2本太い別バリ: spEffectID6 7010→7487
+  ~ 126000 蛇玉（子）・小　通常カラー/1本だけ太い: spEffectID6 7010→7487
+  ~ 126001 蛇玉（子）・小　通常カラー/2本太い: spEffectID6 7010→7487
+  ~ 126002 蛇玉（子）・小　通常カラー/2本太い別バリ: spEffectID6 7010→7487
+  ~ 127400 吸血豚　森: spEffectID6 7010→7487
+  ~ 127500 吸血豚　聖堂街B(少女のリボンを落とす: spEffectID6 7003→7487
+  ~ 127600 吸血豚　トラップロード　悪夢頭: spEffectID6 7020→7487
+  ~ 127800 吸血豚　生贄初回: spEffectID6 7009→7487
+  ~ 129010 異形ビースト（雌）待ち構え　廃墟: spEffectID6 7004→7487
+  ~ 129050 異形ビースト（雌）　聖堂街D: spEffectID6 7480→7487
+  ~ 130000 死と闇の眷属（大）　トラップロード: spEffectID6 7019→7487
+  ~ 140010 白痴の蜘蛛（子）　大学　ボスおとも: spEffectID6 7013→7487
+  ~ 200000 処刑人　墓地街: spEffectID6 7008→7487
+  ~ 200090 処刑人　聖堂街～生贄街: spEffectID6 7009→7487
+  ~ 200110 処刑人　聖堂街B: spEffectID6 7006→7487
+  ~ 200200 処刑人　森: spEffectID6 7010→7487
+  ~ 202000 人さらい　生贄初回: spEffectID6 7009→7487
+  ~ 202006 人さらい 森マップ配置用: spEffectID6 7010→7487
+  ~ 204600 操り骸　ボス部屋用　トラップロード: spEffectID6 7019→7487
+  ~ 205010 狂気の悪霊　墓地街: spEffectID6 7008→7487
+  ~ 205220 狂気の悪霊　SAN値　墓地街: spEffectID6 7028→7487
+  ~ 209000 血に渇いた獣　廃墟: getSoul 0→6600
+  ~ 209010 血に渇いた獣　聖堂街D: spEffectID6 7480→7487
+  ~ 210005 アイコレクター（牢番ババア）　生贄初回: spEffectID6 7009→7487
+  ~ 210020 アイコレクター（Boss用）　墓地街: getSoul 0→11800
+  ~ 211000 蜘蛛のクトゥルフ　大学: spEffectID6 7013→7487
+  ~ 212600 闇の旅団　剣　トラップロード・後半: spEffectID6 7020→7487
+  ~ 212610 闇の旅団　剣・蝋燭　トラップロード・後半: spEffectID6 7020→7487
+  ~ 212620 闇の旅団　オーブ・鎚　トラップロード・後半: spEffectID6 7020→7487
+  ~ 212700 闇の旅団　剣　森ボス: getSoul 0→20460
+  ~ 212710 闇の旅団　剣・蝋燭　森ボス: getSoul 0→20460
+  ~ 212720 闇の旅団　オーブ・鎚　森ボス: getSoul 0→20460
+  ~ 213500 血舐め（血袋小）　古城: spEffectID6 7014→7487
+  ~ 213510 血舐め（血袋中）　古城: spEffectID6 7014→7487
+  ~ 213530 血舐め（血袋特大）　古城: spEffectID6 7014→7487
+  ~ 215000 古城の悪霊（ナイフ）: spEffectID6 7014→7487
+  ~ 215010 古城の悪霊（生首）: spEffectID6 7014→7487
+  ~ 217000 蛇沼からの使者（頭蛇表示済）: spEffectID6 7010→7487
+  ~ 217001 蛇沼からの使者（頭蛇未表示・キャップ）: spEffectID6 7010→7487
+  ~ 217002 蛇沼からの使者（頭蛇未表示・シルクハット）: spEffectID6 7010→7487
+  ~ 217003 蛇沼からの使者（頭蛇未表示・ハット）: spEffectID6 7010→7487
+  ~ 218300 銀の獣の眷属　故郷: spEffectID6 7011→7487
+  ~ 218310 銀の獣の眷属（寄生虫）　故郷: spEffectID6 7011→7487
+  ~ 218320 銀の獣の眷属（4脚）　故郷: spEffectID6 7011→7487
+  ~ 218400 銀の獣の眷属　故郷: spEffectID6 7029→7487
+  ~ 218600 銀の獣の眷属　トラップロード: spEffectID6 7019→7487
+  ~ 218610 銀の獣の眷属（寄生虫）　トラップロード: spEffectID6 7019→7487
+  ~ 219400 寄生虫　森/聖B接続: spEffectID6 7010→7487
+  ~ 219500 寄生虫　古城: spEffectID6 7014→7487
+  ~ 219600 寄生虫　トラップロード: spEffectID6 7019→7487
+  ~ 225000 牢番A　剣のみ＋クロスボウ　トラップロード: spEffectID6 7019→7487
+  ~ 225020 牢番A　鞭（キャットオブナインテイル）　トラップロード: spEffectID6 7019→7487
+  ~ 225040 牢番A　素手（弱そう）　トラップロード: spEffectID6 7019→7487
+  ~ 226000 牢番B　鎖鞭　トラップロード: spEffectID6 7019→7487
+  ~ 232000 王の死神　古城: getSoul 0→25600
+  ~ 232100 王の死神の剣　古城: spEffectID6 7014→7487
+  ~ 233000 王の召使い（剣）　古城: spEffectID6 7014→7487
+  ~ 233010 王の召使い（杖のみ）　古城: spEffectID6 7014→7487
+  ~ 233011 王の召使い（杖のみ・ダメージ）　古城: spEffectID6 7014→7487
+  ~ 233020 王の召使い（杖＋燭台）　古城: spEffectID6 7014→7487
+  ~ 233021 王の召使い（杖＋燭台・ダメージ）　古城: spEffectID6 7014→7487
+  ~ 240010 捨て子の巨人 大岩持ち　故郷: spEffectID6 7011→7487
+  ~ 240600 捨て子の巨人 素手　トラップロード: spEffectID6 7019→7487
+  ~ 240610 捨て子の巨人 大岩持ち　トラップロード: spEffectID6 7019→7487
+  ~ 250061 月からの使者　聖堂街B　元々会話NPCだった: spEffectID6 7010→7487
+  ~ 250062 月からの使者　聖堂街B　元々会話NPCだった: spEffectID6 7010→7487
+  ~ 250063 月からの使者　聖堂街B　元々会話NPCだった: spEffectID6 7010→7487
+  ~ 250064 月からの使者　聖堂街B　元々会話NPCだった: spEffectID6 7010→7487
+  ~ 250065 月からの使者　聖堂街B　元々会話NPCだった: spEffectID6 7010→7487
+  ~ 250066 月からの使者　聖堂街B　元々会話NPCだった: spEffectID6 7010→7487
+  ~ 250070 月からの使者　森: spEffectID6 7010→7487
+  ~ 250081 月からの使者　聖堂街C　ボス戦用ザコ: spEffectID6 7016→7487
+  ~ 250082 月からの使者　聖堂街C　通常敵: spEffectID6 7016→7487
+  ~ 251000 月の落とし子　聖堂街: getSoul 0→28800
+  ~ 252000 月の幼生　聖堂街C: spEffectID6 7016→7487
+  ~ 252001 月の幼生 走行巡回　聖堂街C: spEffectID6 7016→7487
+  ~ 252100 月の幼生（赤子）　娼婦用: spEffectID6 7023→7487
+  ~ 253200 星の花　大学: spEffectID6 7013→7487
+  ~ 254000 這い寄るもの（小）　故郷: spEffectID6 7011→7487
+  ~ 254010 這い寄るもの（小）　故郷: spEffectID6 7029→7487
+  ~ 255000 這い寄るもの（大）　故郷: spEffectID6 7011→7487
+  ~ 255010 這い寄るもの（大）　故郷: spEffectID6 7029→7487
+  ~ 256000 なりそこないメッセンジャー（ほおずき）　故郷: spEffectID6 7029→7487
+  ~ 256100 なりそこないメッセンジャー（ほおずき）　故郷　弾丸発射用ダミーキャラ: spEffectID6 7029→7487
+  ~ 256600 なりそこないメッセンジャー（ほおずき）　トラップロード: spEffectID6 7020→7487
+  ~ 256610 なりそこないメッセンジャー（ほおずき）　トラップロード　弾丸発射用ダミーキャラ: spEffectID6 7020→7487
+  ~ 256699 なりそこないメッセンジャー（ほおずき）　邪眼代用　トラップロード: spEffectID6 7020→7487
+  ~ 256900 なりそこないメッセンジャー（ほおずき）　漁村: spEffectID6 7485→7487
+  ~ 256910 なりそこないメッセンジャー（ほおずき）　漁村　弾丸発射用ダミーキャラ: spEffectID6 7485→7487
+  ~ 257010 月からの使者（大）　聖堂街C　ボス: getSoul 0→24640, spEffectID6 7016→7487
+  ~ 260020 恐ろしい群衆（鍬）　森: spEffectID6 7010→7487
+  ~ 260060 恐ろしい群衆（松明・のこぎり）　森: spEffectID6 7010→7487
+  ~ 260240 恐ろしい群衆（松明・のこぎり）　聖堂街B: spEffectID6 7003→7487
+  ~ 260241 恐ろしい群衆（柵）　聖堂街B: spEffectID6 7003→7487
+  ~ 260242 恐ろしい群衆（柵）　聖堂街B　強ドーピング: spEffectID6 7024→7487
+  ~ 260300 恐ろしい群衆（松明・のこぎり）聖堂街A・中盤: spEffectID6 7024→7487
+  ~ 260320 恐ろしい群衆（鍬）聖堂街A・中盤: spEffectID6 7024→7487
+  ~ 261000 群衆女　鎌　墓地街　: spEffectID6 7008→7487
+  ~ 261010 群衆女　鉈松明　墓地街　: spEffectID6 7008→7487
+  ~ 261020 群衆女　焼きごて　墓地街: spEffectID6 7008→7487
+  ~ 261030 群衆女　ハンマー　墓地街: spEffectID6 7008→7487
+  ~ 261040 群衆女　鉈投擲　墓地街: spEffectID6 7008→7487
+  ~ 261800 群衆女焼死体　鎌　生贄: spEffectID6 7015→7487
+  ~ 261810 群衆女焼死体　鉈松明　生贄: spEffectID6 7015→7487
+  ~ 261820 群衆女焼死体　焼きごて　生贄: spEffectID6 7015→7487
+  ~ 261830 群衆女焼死体　ハンマー　生贄: spEffectID6 7015→7487
+  ~ 261840 群衆女焼死体　鉈投擲　生贄: spEffectID6 7015→7487
+  ~ 262001 群衆（車椅子）　ライフル_固定砲台　聖堂街A: spEffectID6 7007→7487
+  ~ 262030 群衆（車椅子）　火炎放射　聖堂街C: spEffectID6 7007→7487
+  ~ 262121 群衆（車椅子）　ガトリング_固定砲台　聖堂街C: spEffectID6 7007→7487
+  ~ 262310 群衆（車椅子）　短筒　墓地街: spEffectID6 7009→7487
+  ~ 262410 群衆（車椅子）　短筒　聖堂街B: spEffectID6 7001→7487
+  ~ 262800 群衆（車椅子）焼死体　生贄街　ライフル: spEffectID6 7015→7487
+  ~ 262810 群衆（車椅子）焼死体　生贄　短筒　: spEffectID6 7015→7487
+  ~ 262820 群衆（車椅子）焼死体　生贄　ガトリング: spEffectID6 7015→7487
+  ~ 262910 群衆（車椅子）　短筒　時計塔: spEffectID6 7482→7487
+  ~ 262915 群衆（車椅子）　短筒　時計塔_地下牢: spEffectID6 7482→7487
+  ~ 262920 群衆（車椅子）　ガトリング_固定砲台　時計塔: spEffectID6 7482→7487
+  ~ 262930 群衆（車椅子）　噴霧器放射　時計塔: spEffectID6 7482→7487
+  ~ 263000 群衆A（大）　松明＆斧　森: spEffectID6 7010→7487
+  ~ 263010 群衆A（大）　盾＆松明　森: spEffectID6 7010→7487
+  ~ 263030 群衆A（大）　武器（サーベル）　森: spEffectID6 7010→7487
+  ~ 263040 群衆A（大）　武器（包丁）　森: spEffectID6 7010→7487
+  ~ 263050 群衆A（大）　武器（鎌）　森: spEffectID6 7010→7487
+  ~ 263060 群衆A（大）　火炎瓶投擲　森: spEffectID6 7010→7487
+  ~ 263061 群衆A（大）　火炎瓶投擲　乱射砲台　森: spEffectID6 7010→7487
+  ~ 263066 群衆A（大）　油壷投擲　乱射砲台　森: spEffectID6 7010→7487
+  ~ 263070 群衆A（大）　長物両手（鋤）　森: spEffectID6 7010→7487
+  ~ 263080 群衆A（大）　銃　森: spEffectID6 7010→7487
+  ~ 263081 群衆A（大）　銃　固定砲台　森: spEffectID6 7010→7487
+  ~ 263100 群衆A（大）　松明＆斧　【処刑人衣装】: spEffectID6 7007→7487
+  ~ 263130 群衆A（大）　長物両手（鋤）　【処刑人衣装】: spEffectID6 7007→7487
+  ~ 263180 群衆A（大）　リーダー　墓地街: spEffectID6 7008→7487
+  ~ 263182 群衆A（大）　リーダー　固定砲台　墓地街: spEffectID6 7008→7487
+  ~ 263200 群衆A（大）　松明＆斧　服パターン1　聖堂街A・中盤: spEffectID6 7024→7487
+  ~ 263202 群衆A（大）　松明＆斧　服パターン3　聖堂街A・中盤: spEffectID6 7024→7487
+  ~ 263203 群衆A（大）　松明＆斧　服パターン1　聖堂街A・序盤: spEffectID6 7023→7487
+  ~ 263233 群衆A（大）　武器（サーベル）　服パターン1　聖堂街A・序盤: spEffectID6 7023→7487
+  ~ 263250 群衆A（大）　武器（鎌）　服パターン1　聖堂街A・中盤: spEffectID6 7024→7487
+  ~ 263252 群衆A（大）　武器（鎌）　服パターン3　聖堂街A・中盤: spEffectID6 7024→7487
+  ~ 263254 群衆A（大）　武器（鎌）　服パターン3　聖堂街A・序盤: spEffectID6 7023→7487
+  ~ 263270 群衆A（大）　長物両手（鋤）　服パターン1　聖堂街A・中盤: spEffectID6 7024→7487
+  ~ 263273 群衆A（大）　長物両手（鋤）　服パターン1　聖堂街A・序盤: spEffectID6 7023→7487
+  ~ 263280 群衆A（大）　銃　聖堂街A・中盤_砲台特殊効果: spEffectID6 7024→7487
+  ~ 263281 群衆A（大）　銃　聖堂街A・中盤: spEffectID6 7024→7487
+  ~ 263282 群衆A（大）　銃　聖堂街A・序盤_砲台特殊効果: spEffectID6 7023→7487
+  ~ 263400 群衆A（大）　松明＆斧　服パターン1　聖堂街B: spEffectID6 7001→7487
+  ~ 263410 群衆A（大）　盾＆松明　服パターン1　聖堂街B: spEffectID6 7001→7487
+  ~ 263430 群衆A（大）　武器（サーベル）　服パターン1　聖堂街B: spEffectID6 7001→7487
+  ~ 263432 群衆A（大）　武器（サーベル）　服パターン3　聖堂街B: spEffectID6 7001→7487
+  ~ 263433 群衆A（大）　銃（固定砲台）　聖堂街B: spEffectID6 7001→7487
+  ~ 263440 群衆A（大）　武器（包丁）　服パターン1　聖堂街B: spEffectID6 7001→7487
+  ~ 263450 群衆A（大）　武器（鎌）　服パターン1　聖堂街B: spEffectID6 7001→7487
+  ~ 263470 群衆A（大）　長物両手（鋤）　服パターン1　聖堂街B: spEffectID6 7001→7487
+  ~ 263530 群衆A（大）　武器（サーベル）　聖堂街C: spEffectID6 7007→7487
+  ~ 263540 群衆A（大）　武器（包丁）　聖堂街C: spEffectID6 7007→7487
+  ~ 263550 群衆A（大）　武器（鎌）　聖堂街C: spEffectID6 7007→7487
+  ~ 263581 群衆A（大）　銃 固定砲台　聖堂街C: spEffectID6 7007→7487
+  ~ 263610 群衆A（大）　盾＆松明　聖堂街～生贄街: spEffectID6 7009→7487
+  ~ 263630 群衆A（大）　武器（サーベル）　聖堂街～生贄街: spEffectID6 7009→7487
+  ~ 263681 群衆A（大）　銃　固定砲台　聖堂街～生贄街: spEffectID6 7009→7487
+  ~ 263800 群衆A（大）焼死体　松明＆斧　服パターン1　生贄: spEffectID6 7015→7487
+  ~ 263801 群衆A（大）焼死体　松明＆斧　服パターン2　生贄: spEffectID6 7015→7487
+  ~ 263810 群衆A（大）焼死体　盾＆松明　服パターン1　生贄: spEffectID6 7015→7487
+  ~ 263830 群衆A（大）焼死体　武器（サーベル）　服パターン1　生贄: spEffectID6 7015→7487
+  ~ 263831 群衆A（大）焼死体　武器（サーベル）　服パターン2　生贄: spEffectID6 7015→7487
+  ~ 263835 群衆A（大）焼死体　銃　生贄: spEffectID6 7015→7487
+  ~ 263841 群衆A（大）焼死体　武器（包丁）　服パターン2　生贄: spEffectID6 7015→7487
+  ~ 263850 群衆A（大）焼死体　武器（鎌）　服パターン1　生贄: spEffectID6 7015→7487
+  ~ 263851 群衆A（大）焼死体　武器（鎌）　服パターン2　生贄: spEffectID6 7015→7487
+  ~ 263860 群衆A（大）焼死体　投擲: spEffectID6 7015→7487
+  ~ 263870 群衆A（大）焼死体　長物両手（鋤）　服パターン1　生贄: spEffectID6 7015→7487
+  ~ 263895 群衆A（大）　素手　生贄初回: spEffectID6 7009→7487
+  ~ 264100 群衆B（大）　レンガ　マント付  墓地街: spEffectID6 7008→7487
+  ~ 264200 群衆B（大）　レンガ　聖堂街A: spEffectID6 7023→7487
+  ~ 264210 群衆B（大）　石像　聖堂街A: spEffectID6 7023→7487
+  ~ 264400 群衆B（大）　レンガ　聖堂街B: spEffectID6 7002→7487
+  ... mais 507 linhas alteradas
+  Variantes de escalonamento (nível → campo: valores mais comuns):
+    nível 0: spEffectID6=7001(×820); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 1: spEffectID6=7002(×819); GameClearSpEffectID=7002(×1); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 2: spEffectID6=7003(×818); GameClearSpEffectID=7003(×1); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 3: spEffectID6=7004(×819); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 4: spEffectID6=7006(×818)/7004(×1); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 5: spEffectID6=7007(×819)/7008(×1); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 6: spEffectID6=7008(×816)/7007(×3)/7009(×1); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 7: spEffectID6=7009(×818); spEffectID7=71110(×1); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 8: spEffectID6=7010(×816)/7011(×1); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 9: spEffectID6=7011(×818)/7013(×1)/7010(×1); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 10: spEffectID6=7013(×818)/7014(×1); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 11: spEffectID6=7014(×818)/7015(×1); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 12: spEffectID6=7015(×818)/7016(×1); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 13: spEffectID6=7016(×820); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 14: spEffectID6=7016(×819)/7017(×1); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 15: spEffectID6=7017(×818)/7019(×1); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 16: spEffectID6=7019(×819)/7020(×1); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 17: spEffectID6=7020(×818)/7021(×1); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 18: spEffectID6=7021(×818); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 19: spEffectID6=7022(×819)/7023(×1); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 20: spEffectID6=7023(×819)/7024(×1); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 21: spEffectID6=7024(×819)/7480(×1); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 22: spEffectID6=7480(×817)/7481(×2)/480(×1); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 23: spEffectID6=7481(×816)/7482(×2); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 24: spEffectID6=7482(×818)/7483(×2); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 25: spEffectID6=7483(×819); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 26: spEffectID6=7483(×817)/7484(×2); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 27: spEffectID6=7484(×817)/7485(×2); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 28: spEffectID6=7485(×818)/7486(×2); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 29: spEffectID6=7486(×816)/7487(×1)/70487(×1); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+    nível 30: spEffectID6=7487(×32); behaviorVariationId=45410(×1); aiThinkId=454100(×1); nameId=454100(×1); hitRadius=0.4(×1); spEffectID0=5300(×1); def_phys=135(×1); def_mag=195(×1); def_thunder=165(×1); superArmorDurability=65(×1)
+=== NpcThinkParam: +1 linhas, -0, 1 alteradas
+  + IDs 551111
+  ~ 250100 テスト用: logicId 10000→250100, battleGoalID 11000→250100, midDist 5→4, outDist 20→30, BackHomeLife_OnHitEneWal 0→5, callHelp_ActionAnimId -1→0, callHelp_CallActionId -1→0, maxBackhomeDist 75→9999, backhomeDist 50→9999, backhomeBattleDist 15→9999, nonBattleActLife 5→9999, BackHome_LookTargetTime 10→9999, BackHome_LookTargetDist 20→9999, TeamAttackEffectivity 25→0, goalAction_ToCaution 2→1, enableNaviFlg_Edge 0→1, enableNaviFlg_LargeSpace 0→1, enableNaviFlg_Door 0→1, enableNaviFlg_Edge_Ordinary 0→1, eyeDist_forPitchDark 5→7, goalAction_ToDisappear 2→1
+    nova 551111 wet nurse no darkness: logicId=10000 battleGoalID=551111 nearDist=3 midDist=7 farDist=12 outDist=40 BackHomeLife_OnHitEneWal=0 goalID_ToCaution=0 idAttackCannotMove=3000 goalID_ToFind=0 callHelp_ActionAnimId=0 callHelp_CallActionId=0
+=== SpEffectParam: +1 linhas, -0, 1 alteradas
+  + IDs 999999
+  ~ 2010 ランタン点灯: physicsDiffence 0→1, magicDiffence 0→1, fireDiffence 0→1, thunderDiffence 0→1, staminaRecoverChangeSpeed 0→1, bloodDamageRate 100→1
+    nova 999999 BOSS HP: iconId=-1 conditionHp=-1 effectEndurance=0 motionInterval=0 maxHpRate=1 maxMpRate=1 maxStaminaRate=1 slashDamageCutRate=1 blowDamageCutRate=1 thrustDamageCutRate=1 neutralDamageCutRate=1 magicDamageCutRate=1

@@ -31,15 +31,13 @@ public sealed class BossSwapper(RandomizerSettings settings, ParamBundle param, 
 
     sealed record Slot(string Name, string AreaName, BossArena? Arena, List<(MapFile Map, MSBB.Part.Enemy Part)>[] Parts, List<Phase> Boss);
 
-    readonly Dictionary<(int, int), int> _scaled = new();
-    Dictionary<long, PARAM.Row>? _npcRows;
-    long _nextId = FirstScaledNpcId;
+    NpcScaler? _scaler;
 
     public void Swap(IReadOnlyDictionary<string, MapFile> maps)
     {
         if (!settings.SwapBosses)
             return;
-        _npcRows = param.Index("NpcParam");
+        _scaler = new NpcScaler(param, FirstScaledNpcId);
 
         var arenas = GameData.BossArenas.Where(a => a.Kind switch
         {
@@ -164,7 +162,8 @@ public sealed class BossSwapper(RandomizerSettings settings, ParamBundle param, 
     {
         var originalNpc = part.NPCParamID;
         part.NPCParamID = settings.ScaleSwappedBosses ? ScaledNpc(phase.Npc, originalNpc) : phase.Npc;
-        // IAs que o original ajustava ao tirar estes chefes do lugar deles.
+        // IAs que o original ajustava ao tirar estes chefes do lugar deles (551000 = Mergo's Wet Nurse,
+        // 551111 = a IA dela sem a escuridão da arena).
         part.ThinkParamID = phase.Npc switch
         {
             551000 => 551111,
@@ -180,23 +179,17 @@ public sealed class BossSwapper(RandomizerSettings settings, ParamBundle param, 
     /// </summary>
     int ScaledNpc(int newNpc, int arenaNpc)
     {
-        if (newNpc == arenaNpc || !_npcRows!.TryGetValue(newNpc, out var source) || !_npcRows.TryGetValue(arenaNpc, out var arena))
+        if (newNpc == arenaNpc || !_scaler!.TryGet(newNpc, out var source) || !_scaler.TryGet(arenaNpc, out var arena))
             return newNpc;
-        if (_scaled.TryGetValue((newNpc, arenaNpc), out var cached))
-            return cached;
-
-        var row = param.CloneRow("NpcParam", source, _nextId);
-        _nextId = row.ID - 1;
-        foreach (var field in InheritedFields)
-            row.SetInt(field, arena.GetInt(field));
-        // spEffectID6 é o escalonamento da área (70xx no jogo base, 748x no DLC).
-        if (IsAreaScaling(arena.GetInt("spEffectID6")) && IsAreaScaling(source.GetInt("spEffectID6")))
-            row.SetInt("spEffectID6", arena.GetInt("spEffectID6"));
-        _scaled[(newNpc, arenaNpc)] = (int)row.ID;
-        return (int)row.ID;
+        return _scaler.Clone(newNpc, arenaNpc.ToString(), row =>
+        {
+            foreach (var field in InheritedFields)
+                row.SetInt(field, arena.GetInt(field));
+            // spEffectID6 é o escalonamento da área (70xx no jogo base, 748x no DLC).
+            if (NpcScaler.IsAreaScaling(arena.GetInt("spEffectID6")) && NpcScaler.IsAreaScaling(source.GetInt("spEffectID6")))
+                row.SetInt("spEffectID6", arena.GetInt("spEffectID6"));
+        });
     }
-
-    static bool IsAreaScaling(int spEffect) => spEffect is >= 7000 and < 7500;
 
     /// <summary>
     /// Embaralha os chefes das masmorras de cálice entre si, sem repetir. Lutas com vários chefes iguais

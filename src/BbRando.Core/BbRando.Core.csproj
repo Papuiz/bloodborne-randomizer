@@ -14,4 +14,9 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Ajustes do mod original guardados como dados (gerado por "BbRando.Cli export-patches"). -->
+    <EmbeddedResource Include="Data\modpatches.json" LogicalName="BbRando.Core.Data.modpatches.json" />
+  </ItemGroup>
+
 </Project>

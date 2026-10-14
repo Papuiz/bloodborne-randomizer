@@ -79,14 +79,45 @@ public sealed class MainViewModel : ObservableObject
         get => _modPath;
         set
         {
-            if (Set(ref _modPath, value))
+            if (Set(ref _modPath, value) && UseModPack)
                 _ = LoadCatalogAsync();
         }
     }
 
     public string OutputPath { get => _outputPath; set => Set(ref _outputPath, value); }
     public string GamePath { get => _gamePath; set => Set(ref _gamePath, value); }
-    public string VanillaPath { get => _vanillaPath; set => Set(ref _vanillaPath, value); }
+
+    public string VanillaPath
+    {
+        get => _vanillaPath;
+        set
+        {
+            if (Set(ref _vanillaPath, value) && UseVanilla)
+                _ = LoadCatalogAsync();
+        }
+    }
+
+    /// <summary>Fonte dos arquivos-base: jogo limpo (padrão) ou pacote do mod original (legado).</summary>
+    public bool UseVanilla
+    {
+        get => Settings.Source == SourceMode.Vanilla;
+        set
+        {
+            Settings.Source = value ? SourceMode.Vanilla : SourceMode.ModPack;
+            Changed();
+            Raise(nameof(UseModPack));
+            _ = LoadCatalogAsync();
+        }
+    }
+
+    public bool UseModPack
+    {
+        get => !UseVanilla;
+        set => UseVanilla = !value;
+    }
+
+    /// <summary>Pasta/arquivo de onde a randomização lê, conforme a fonte escolhida.</summary>
+    string SourcePath => UseVanilla ? VanillaPath : ModPath;
 
     // ---------------- Seed ----------------
 
@@ -125,6 +156,7 @@ public sealed class MainViewModel : ObservableObject
         foreach (var e in _allEnemies)
             e.Refresh();
         RaiseAll();
+        _ = LoadCatalogAsync(); // o código pode ter trocado a fonte
         return null;
     }
 
@@ -191,6 +223,7 @@ public sealed class MainViewModel : ObservableObject
     public bool StatueHelpers { get => Settings.StatueHelpers; set { Settings.StatueHelpers = value; Changed(); } }
     public bool SwapChaliceBosses { get => Settings.SwapChaliceBosses; set { Settings.SwapChaliceBosses = value; Changed(); } }
     public bool ProtectBellMaidens { get => Settings.ProtectBellMaidens; set { Settings.ProtectBellMaidens = value; Changed(); } }
+    public bool ScaleEnemiesToArea { get => Settings.ScaleEnemiesToArea; set { Settings.ScaleEnemiesToArea = value; Changed(); } }
     public bool AvoidSameEnemy { get => Settings.AvoidSameEnemy; set { Settings.AvoidSameEnemy = value; Changed(); } }
 
     void Changed([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
@@ -220,18 +253,21 @@ public sealed class MainViewModel : ObservableObject
     {
         _allEnemies.Clear();
         VisibleEnemies.Clear();
-        if (string.IsNullOrWhiteSpace(ModPath))
+        var path = SourcePath;
+        var mode = Settings.Source;
+        if (string.IsNullOrWhiteSpace(path))
         {
-            CatalogStatus = "Escolha a pasta do mod para carregar a lista de inimigos.";
+            CatalogStatus = UseVanilla
+                ? "Escolha a cópia limpa do jogo (aba Início) para carregar a lista de inimigos."
+                : "Escolha a pasta do mod para carregar a lista de inimigos.";
             return;
         }
-        CatalogStatus = "Carregando inimigos do mod...";
-        var path = ModPath;
+        CatalogStatus = "Carregando a lista de inimigos...";
         try
         {
-            var models = await Task.Run(() => Randomizer.LoadCatalog(path).Models());
-            if (path != ModPath)
-                return; // a pasta mudou enquanto carregava
+            var models = await Task.Run(() => Randomizer.LoadCatalog(path, mode).Models());
+            if (path != SourcePath || mode != Settings.Source)
+                return; // a fonte mudou enquanto carregava
             foreach (var m in models)
                 _allEnemies.Add(new EnemyRow(m, this));
             FilterEnemies();
@@ -239,7 +275,7 @@ public sealed class MainViewModel : ObservableObject
         }
         catch (Exception e) when (e is IOException or InvalidDataException or UnauthorizedAccessException)
         {
-            CatalogStatus = "Não foi possível ler o mod: " + e.Message;
+            CatalogStatus = "Não foi possível ler a fonte: " + e.Message;
         }
     }
 
@@ -323,16 +359,18 @@ public sealed class MainViewModel : ObservableObject
     public async Task RandomizeAsync()
     {
         var settings = Settings.Clone();
-        var mod = ModPath;
+        var source = SourcePath;
         var output = OutputPath;
         string? logDir = null;
         await RunAsync("Randomizar", progress =>
         {
-            if (string.IsNullOrWhiteSpace(mod))
-                throw new InvalidOperationException("Escolha a pasta do mod original (aba Início).");
+            if (string.IsNullOrWhiteSpace(source))
+                throw new InvalidOperationException(settings.Source == SourceMode.Vanilla
+                    ? "Escolha a cópia limpa do jogo (aba Início)."
+                    : "Escolha a pasta do mod original (aba Início).");
             if (string.IsNullOrWhiteSpace(output))
                 throw new InvalidOperationException("Escolha a pasta de saída (aba Início).");
-            var r = Randomizer.Run(mod, output, settings, progress);
+            var r = Randomizer.Run(source, output, settings, progress);
             logDir = r.LogDir;
             var lines = new List<string>
             {
@@ -358,7 +396,9 @@ public sealed class MainViewModel : ObservableObject
             if (string.IsNullOrWhiteSpace(game))
                 throw new InvalidOperationException("Escolha a pasta do jogo (aba Início).");
             var r = GameInstaller.Apply(output, game, progress);
-            return $"{r.Copied} arquivos copiados para o jogo. Backup dos originais em: {r.StateDir}";
+            var lines = new List<string> { $"{r.Copied} arquivos copiados para o jogo. Backup dos originais em: {r.StateDir}" };
+            lines.AddRange(r.Problems.Select(p => "Aviso: " + p));
+            return string.Join(Environment.NewLine, lines);
         });
     }
 

@@ -173,7 +173,8 @@ public static class GameData
         new("ebrietas", "Ebrietas, Daughter of the Cosmos", BossArenaKind.Normal, ["m24_02_00_00", "m24_02_00_01"], ["c2510_0000"],
             Banned: ["c5100", "c8050", "c4520", "c4500", "c3060"]),
         new("logarius", "Martyr Logarius", BossArenaKind.Normal, ["m25_00_00_00"], ["c2320_0000"]),
-        new("micolash", "Micolash, Host of the Nightmare", BossArenaKind.Normal, ["m26_00_00_00"], ["c5510_0000", "c5510_0001", "c5510_0002"]),
+        // c5510 é a Mergo's Wet Nurse (a IA 551111 do mod se chama "wet nurse no darkness"); 0001/0002 são os clones dela.
+        new("wet_nurse", "Mergo's Wet Nurse", BossArenaKind.Normal, ["m26_00_00_00"], ["c5510_0000"], Helpers: ["c5510_0001", "c5510_0002"]),
         new("rom", "Rom, the Vacuous Spider", BossArenaKind.Normal, ["m32_00_00_00", "m32_00_00_01"], ["c5100_0000"]),
         new("amygdala", "Amygdala", BossArenaKind.Normal, ["m33_00_00_00"], ["c5120_0001"]),
         new("laurence", "Laurence, the First Vicar", BossArenaKind.Normal, ["m34_00_00_00"], ["c4500_0000"], Banned: ["c3060"]),
@@ -188,6 +189,10 @@ public static class GameData
             Banned: ["c5100", "c8050", "c4520", "c4500", "c3060"]),
         new("shadows", "Shadow of Yharnam", BossArenaKind.Group, ["m27_00_00_00", "m27_00_00_01"], ["c2120_0000"], Helpers: ["c2120_0001", "c2120_0002"]),
         new("one_reborn", "The One Reborn", BossArenaKind.Group, ["m28_00_00_00", "m28_00_00_01"], ["c5070_0000"]),
+        // Com os eventos do mod (91919191–94 em m35), a luta termina quando a Failure principal morre e o
+        // controlador escondido (c4030_0004) mata as outras pela vida dele.
+        new("living_failures", "Living Failures", BossArenaKind.Group, ["m35_00_00_00"], ["c4030_0000"],
+            Helpers: ["c4030_0001", "c4030_0002", "c4030_0003"]),
     ];
 
     /// <summary>Estátua inofensiva (2 de vida) que o original usava no lugar dos ajudantes no "modo fácil".</summary>

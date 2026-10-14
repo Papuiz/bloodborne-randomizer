@@ -32,11 +32,12 @@
               <StackPanel>
                 <TextBlock Classes="h2" Text="Pastas" Margin="0,0,0,8" />
 
-                <TextBlock Text="Pasta do mod original (dvdroot_ps4 do Randomizer 5.2)" />
-                <TextBlock Classes="descflat" Text="Os arquivos-base vêm daqui. Ela só é lida, nunca alterada. Exemplo: Downloads/Randomizer/5.2/dvdroot_ps4" />
-                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,12">
-                  <TextBox Text="{Binding ModPath}" Watermark="Selecione a pasta dvdroot_ps4 do mod" />
-                  <Button Grid.Column="1" Content="Procurar..." Margin="8,0,0,0" Click="PickModFolder" />
+                <TextBlock Text="Cópia limpa do jogo (pasta ou .zip)" />
+                <TextBlock Classes="descflat" Text="A base da randomização e do Unrandomizer. Precisa ser o jogo sem mods: uma pasta CUSA03173 (ou a dvdroot_ps4 dentro dela) ou um .zip com ela. Ela só é lida, nunca alterada." />
+                <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,0,0,12">
+                  <TextBox Text="{Binding VanillaPath}" Watermark="Ex.: ~/Games/Bloodborne.zip" />
+                  <Button Grid.Column="1" Content="Pasta..." Margin="8,0,0,0" Click="PickVanillaFolder" />
+                  <Button Grid.Column="2" Content=".zip..." Margin="8,0,0,0" Click="PickVanillaZip" />
                 </Grid>
 
                 <TextBlock Text="Pasta de saída" />
@@ -47,19 +48,25 @@
                 </Grid>
 
                 <TextBlock Text="Pasta do jogo (port)" />
-                <TextBlock Classes="descflat" Text="A pasta CUSA03173 (ou a dvdroot_ps4 dentro dela). Só é usada pelos botões &quot;Aplicar no jogo&quot; e &quot;Unrandomizer&quot;." />
+                <TextBlock Classes="descflat" Text="A pasta CUSA03173 que o jogo usa. Só é mexida pelos botões &quot;Aplicar no jogo&quot; e &quot;Unrandomizer&quot;." />
                 <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,12">
                   <TextBox Text="{Binding GamePath}" Watermark="Ex.: ~/Games/Bloodborne/CUSA03173" />
                   <Button Grid.Column="1" Content="Procurar..." Margin="8,0,0,0" Click="PickGameFolder" />
                 </Grid>
 
-                <TextBlock Text="Cópia original do jogo (opcional, para o Unrandomizer)" />
-                <TextBlock Classes="descflat" Text="Uma pasta ou um .zip com o jogo limpo. Com ela, o Unrandomizer também desfaz mods aplicados antes deste programa, como o randomizer antigo." />
-                <Grid ColumnDefinitions="*,Auto,Auto">
-                  <TextBox Text="{Binding VanillaPath}" Watermark="Ex.: ~/Games/Bloodborne.zip" />
-                  <Button Grid.Column="1" Content="Pasta..." Margin="8,0,0,0" Click="PickVanillaFolder" />
-                  <Button Grid.Column="2" Content=".zip..." Margin="8,0,0,0" Click="PickVanillaZip" />
-                </Grid>
+                <Expander Header="Modo legado: pacote do mod original" HorizontalAlignment="Stretch">
+                  <StackPanel>
+                    <TextBlock Classes="descflat" Text="O programa já não precisa do mod original: os ajustes dele (eventos, IA, efeitos, força dos inimigos) são gerados a partir do jogo limpo. Este modo usa a pasta do mod como base, como nas versões antigas, e fica aqui até o novo modo ser testado no jogo." />
+                    <RadioButton GroupName="fonte" Content="Jogo limpo (recomendado)" IsChecked="{Binding UseVanilla}" />
+                    <RadioButton GroupName="fonte" Content="Pacote do mod original (legado)" IsChecked="{Binding UseModPack}" Margin="0,0,0,8" />
+                    <TextBlock Text="Pasta do mod original (dvdroot_ps4 do Randomizer 5.2)" />
+                    <TextBlock Classes="descflat" Text="Usada no modo legado. Também ajuda o Unrandomizer a remover o mod antigo do jogo." />
+                    <Grid ColumnDefinitions="*,Auto">
+                      <TextBox Text="{Binding ModPath}" Watermark="Opcional" />
+                      <Button Grid.Column="1" Content="Procurar..." Margin="8,0,0,0" Click="PickModFolder" />
+                    </Grid>
+                  </StackPanel>
+                </Expander>
               </StackPanel>
             </Border>
 
@@ -73,7 +80,7 @@
                 </Grid>
 
                 <TextBlock Text="Código compartilhável" Margin="0,14,0,0" />
-                <TextBlock Classes="descflat" Text="Inclui a seed e todas as opções. Envie para um amigo: colando este código, ele recebe exatamente o mesmo jogo (usando o mesmo pacote do mod)." />
+                <TextBlock Classes="descflat" Text="Inclui a seed e todas as opções. Envie para um amigo: colando este código, ele recebe exatamente o mesmo jogo." />
                 <Grid ColumnDefinitions="*,Auto,Auto">
                   <TextBox Text="{Binding SeedCode, Mode=OneWay}" IsReadOnly="True" FontFamily="monospace" />
                   <Button Grid.Column="1" Content="Copiar" Margin="8,0,0,0" Click="CopySeedCode" />
@@ -160,6 +167,8 @@
                   <TextBlock Classes="h2" Text="Outros" />
                   <CheckBox Content="Proteger as mulheres do sino" IsChecked="{Binding ProtectBellMaidens}" />
                   <TextBlock Classes="desc" Text="Não troca as mulheres que tocam o sino, para os pontos que geram inimigos continuarem funcionando." />
+                  <CheckBox Content="Ajustar a força dos inimigos ao lugar" IsChecked="{Binding ScaleEnemiesToArea}" />
+                  <TextBlock Classes="desc" Text="O inimigo novo fica com a força do inimigo que estava naquele lugar. Sem isso, um inimigo do fim do jogo continua com a força dele no Central Yharnam." />
                   <CheckBox Content="Nunca repetir o inimigo original" IsChecked="{Binding AvoidSameEnemy}" />
                   <TextBlock Classes="desc" Text="Quando um inimigo é trocado, o novo é sempre de outro tipo." />
                 </StackPanel>

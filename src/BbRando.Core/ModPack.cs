@@ -1,16 +1,14 @@
-using System.Text;
-
 namespace BbRando.Core;
 
 /// <summary>
 /// Pasta dvdroot_ps4 do mod original (somente leitura). Para cada arquivo, a cópia ".bak"
 /// é a base distribuída pelo autor; o arquivo sem ".bak" pode já ter sido randomizado.
 /// </summary>
-public sealed class ModPack
+public sealed class ModPack : IGameSource
 {
-    static ModPack() => Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-
     public string Root { get; }
+    public string Description => Root;
+    public SourceMode Mode => SourceMode.ModPack;
 
     public ModPack(string root)
     {
@@ -30,6 +28,25 @@ public sealed class ModPack
     }
 
     public bool Exists(string relative) => File.Exists(Resolve(relative));
+
+    public byte[] ReadBytes(string relative) => File.ReadAllBytes(Resolve(relative));
+
+    public IEnumerable<string> Files() => GameFiles();
+
+    public Dictionary<string, long> ModelSizes()
+    {
+        var names = ReadDataFile("Names.txt");
+        var sizes = ReadDataFile("Sizes.txt");
+        var result = new Dictionary<string, long>();
+        for (var i = 0; i < Math.Min(names.Length, sizes.Length); i++)
+            if (long.TryParse(sizes[i].Trim(), out var size))
+                result.TryAdd(names[i].Trim(), size);
+        return result;
+    }
+
+    public void Dispose()
+    {
+    }
 
     /// <summary>
     /// Arquivos que o mod precisa no jogo (relativos, com "/"), sem backups, logs e dados auxiliares.

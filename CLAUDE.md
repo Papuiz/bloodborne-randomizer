@@ -8,6 +8,11 @@ O dono do projeto fala português (pt-BR). Responda e escreva textos de interfac
 Ele joga com um port nativo para Linux (AppImage `Bloodborne-bbport-x86_64.AppImage`) que lê os
 arquivos soltos da pasta `CUSA03173/dvdroot_ps4`.
 
+Desde o marco 1, o programa **não depende mais do mod original**. A base é uma **cópia limpa do jogo**
+(pasta ou `.zip`), e os ajustes do mod que o randomizer precisa são gerados ou aplicados a partir de
+dados embutidos. O "modo legado" (pasta do mod como base) continua existindo até o usuário validar o
+modo novo no jogo.
+
 ## Preparar uma máquina nova
 
 1. **.NET SDK 10** (sem sudo):
@@ -18,28 +23,31 @@ arquivos soltos da pasta `CUSA03173/dvdroot_ps4`.
    ```
    Se o seu shell não carregar o `~/.bashrc`, exporte essas variáveis em cada comando.
    No Windows, use o instalador oficial do .NET 10 SDK.
-2. **Pacote do mod original** (não está no repositório): baixe o "Bloodborne Enemy and Item Randomizer"
-   5.2 no Nexus Mods, extraia, e use a pasta `5.2/dvdroot_ps4` como "pasta do mod". Os arquivos `.bak`
-   dentro dela fazem parte do pacote e são a base. Não os apague.
-3. **Pergunte ao usuário** onde ficam, nessa máquina: o pacote do mod, a pasta do jogo (CUSA03173) e a
-   cópia limpa do jogo (pasta ou `.zip`, usada pelo Unrandomizer). Não suponha caminhos.
-4. `dotnet build` na raiz. Se compilar sem avisos, está pronto.
+2. **Pergunte ao usuário** onde ficam, nessa máquina: a cópia limpa do jogo (pasta ou `.zip`), a pasta
+   do jogo (CUSA03173) e, só se for usar o modo legado ou regerar os patches, a pasta `5.2/dvdroot_ps4`
+   do mod original (Nexus Mods). Não suponha caminhos.
+3. `dotnet build` na raiz. Precisa dar **0 avisos**.
+4. `dotnet test` (rápido). Com `BBR_VANILLA=<cópia limpa>` roda também os testes com os dados do jogo
+   (~2 min).
 
 ## Comandos do dia a dia
 
 ```bash
-dotnet build                                   # tudo (deve dar 0 avisos)
+dotnet build && dotnet test
 dotnet run --project src/BbRando.App           # interface
 C=src/BbRando.Cli/bin/Debug/net10.0/BbRando.Cli
-$C randomize <mod> <saida> --seed teste        # gera tudo + logs/itens.txt e logs/inimigos.txt
-$C randomize <mod> <saida> --config cfg.json   # cfg.json = RandomizerSettings em JSON (só o que muda)
-$C randomize <mod> <saida> --code BBR1-...     # reproduz um código de seed
-$C verify <mod> <saida>                        # relê os mapas gerados; falha se faltar modelo
-$C catalog <mod>                               # lista de inimigos/chefes sorteáveis
-$C bosses <mod>                                # todas as partes de chefe nos mapas (nomes, vida, almas)
-$C parts <arquivo.msb.dcx> <filtro>            # partes de inimigo de um mapa
-$C fields <mod> <Param> <id>                   # todos os campos de uma linha de parâmetro
+# <fonte> = cópia limpa (pasta ou .zip); a pasta do mod (tem "Mod Files") ativa o modo legado
+$C randomize <fonte> <saida> --seed teste       # gera tudo + logs/itens.txt e logs/inimigos.txt
+$C randomize <fonte> <saida> --config cfg.json  # cfg.json = RandomizerSettings em JSON (só o que muda)
+$C randomize <fonte> <saida> --code BBR2-...    # reproduz um código de seed
+$C verify <fonte> <saida>                       # relê os mapas gerados; falha se faltar modelo
+$C catalog <fonte>                              # inimigos/chefes sorteáveis
+$C bosses <fonte> / parts <msb> <filtro> / fields <fonte> <Param> <id>   # inspeção
+$C compare-bnd <a.dcx> <b.dcx> [--all]          # compara os arquivos internos de dois pacotes
 $C apply <saida> <jogo> / unrandomize <jogo> [--vanilla zip-ou-pasta] [--mod <mod>]
+# Desenvolvimento (precisam do mod original e da cópia limpa):
+$C analyze-mod <mod> <limpo> referencia/analise-mod          # relatórios do que os autores mudaram
+$C export-patches <mod> <limpo> src/BbRando.Core/Data/modpatches.json   # regera os patches embutidos
 ```
 
 Executáveis autônomos (não vão para o git: o .exe passa do limite de 100 MB do GitHub):
@@ -51,119 +59,150 @@ dotnet publish src/BbRando.App -c Release -r linux-x64 --self-contained -p:Publi
 
 ## Como testar uma mudança
 
-1. `dotnet build` sem avisos.
+1. `dotnet build` sem avisos e `dotnet test` (com `BBR_VANILLA` quando mexer na geração).
 2. `randomize` numa pasta temporária e depois `verify`.
-3. **Determinismo**: gere duas vezes com a mesma seed e compare os md5 de todos os arquivos de
-   `dvdroot_ps4/` e `logs/`. Precisam ser idênticos. Gere também com `--code` (o código de `seed.txt`)
-   e compare de novo.
-4. Leia os logs gerados para conferir se o resultado faz sentido.
-5. **Nunca** rode `apply`/`unrandomize` na pasta real do jogo sem o usuário pedir. Para testar, crie
-   uma pasta falsa `.../CUSA03173/dvdroot_ps4` com alguns arquivos copiados do jogo. O estado do
-   instalador fica em `~/.local/share/BloodborneRandomizer/jogo-<hash>/` (backups e manifesto).
-6. A interface não tem testes automáticos. Para conferir o visual no Linux/X11 dá para capturar a
-   janela com `xwd -id <janela>` e converter para PNG com um script Python/PIL que lê o formato XWD.
+3. **Determinismo**: gere duas vezes com a mesma seed e compare os md5 de todos os arquivos. Precisam ser
+   idênticos. Gere também com `--code` (o código de `seed.txt`) e compare de novo.
+4. **Compatibilidade**: um código `BBR1-` (versão anterior) no modo legado tem que gerar exatamente o
+   mesmo resultado que a versão anterior gerava (dá para conferir com um `git worktree` do commit antigo).
+5. Leia os logs gerados para conferir se o resultado faz sentido.
+6. **Nunca** rode `apply`/`unrandomize` na pasta real do jogo sem o usuário pedir. Para testar, crie uma
+   pasta falsa `.../CUSA03173/dvdroot_ps4` com alguns arquivos copiados do jogo. O estado do instalador
+   fica em `~/.local/share/BloodborneRandomizer/jogo-<hash>/` (backups e manifesto).
+7. A interface não tem testes automáticos. Para conferir o visual no Linux/X11: rode o app com
+   `XDG_DATA_HOME=<pasta temporária>` (para não mexer nas configurações do usuário), capture com
+   `xwd -id <janela>` e converta para PNG com um script Python/PIL que lê o formato XWD.
 
 ## Arquitetura
 
 ```
 src/BbRando.Core/      lógica (sem interface)
-  ModPack.cs           lê o pacote do mod; prefere "arquivo.bak" (a base) a "arquivo"
+  GameSource.cs        IGameSource; VanillaGameSource (pasta ou .zip); registro da codificação Shift-JIS
+  ModPack.cs           fonte do modo legado (pasta do mod; prefere "arquivo.bak", que é a base)
+  ModPatches.cs        ajustes do mod original guardados como dados (Data/modpatches.json) e a aplicação
+  AiScripts.cs         junta os scripts de IA de todos os mapas em cada pacote script/mXX.luabnd
+  SfxMerge.cs          junta os efeitos de personagem no pacote sfx comum
+  AreaScaling.cs       NpcScaler (cópias de NpcParam) + escalonamento de força dos inimigos
   GameText.cs          textos .fmg (nomes de itens, NPCs, lugares)
-  ParamBundle.cs       gameparam + paramdefs; Index() (IDs repetidos: vale o primeiro); CloneRow()
-  GameData.cs          áreas, mapas, listas de proteção, arenas de chefe (dados do jogo)
+  ParamBundle.cs       gameparam + paramdefs; Index() (IDs repetidos: vale o primeiro); CloneRow(); AddRow()
+  GameData.cs          áreas, mapas, listas de proteção, arenas de chefe
   MapFile.cs           um .msb carregado + Describe() (área/sublocal/coordenadas); flag Dirty
   Enemies.cs           EnemyCatalog (pools), EnemyRandomizer, ModelTable.EnsureModels
   BossSwap.cs          modo swap (permutação de chefes entre arenas + ajuste de força)
   Items.cs             ItemCatalog (conteúdo dos lotes) e ItemRandomizer (tesouros e drops)
   Randomizer.cs        pipeline completo + escrita dos logs (SpoilerLog)
-  Settings.cs          RandomizerSettings + código de seed BBR1-
-  GameInstaller.cs     Aplicar no jogo / Unrandomizer (backups, manifesto, cópia limpa .zip/pasta)
+  Settings.cs          RandomizerSettings + código de seed BBR2- (lê BBR1-)
+  GameInstaller.cs     Aplicar no jogo / Unrandomizer (backups, manifesto, cópia limpa)
   Rng.cs               xoshiro256** com fluxos por etapa
 src/BbRando.App/       interface Avalonia 11.3.22 (MVVM simples, sem toolkit)
-src/BbRando.Cli/       linha de comando e ferramentas de inspeção
-lib/SoulsFormats.dll   biblioteca de formatos da FromSoftware (netstandard2.1), veio do pacote do mod
-referencia/descompilado/  código do mod original descompilado com ILSpy (usar só como consulta)
+src/BbRando.Cli/       linha de comando; ModAnalysis.cs = diff mod × jogo limpo e exportação dos patches
+tests/BbRando.Tests/   xUnit (CoreTests sempre; GameDataTests com BBR_VANILLA)
+lib/SoulsFormats.dll   formatos da FromSoftware (netstandard2.1), veio do pacote do mod
+referencia/descompilado/   mod original descompilado com ILSpy (só consulta)
+referencia/analise-mod/    relatórios do diff mod × jogo limpo (resumo, params, eventos, pacotes...)
+referencia/bb-emedf.json   nomes e argumentos das instruções de evento do BB (projeto DarkScript3)
 ```
 
 A ordem do pipeline (`Randomizer.Run`) importa:
-1. Carregar textos, parâmetros e mapas.
-2. **Montar o EnemyCatalog antes de qualquer troca** (as listas vêm dos mapas intactos).
-3. Embaralhar os drops (antes do swap, para o chefe novo herdar a recompensa já embaralhada).
-4. Fazer o swap de chefes.
-5. Randomizar os inimigos (eles excluem os modelos dos chefes do swap).
-6. Embaralhar os tesouros.
-7. Rodar `EnsureModels` em todo mapa com `Dirty`.
-8. Copiar os arquivos do pacote e gravar só os mapas `Dirty`, o param e os logs.
+1. Abrir a fonte; carregar textos, parâmetros e mapas.
+2. Modo jogo limpo: aplicar os patches de parâmetros e de mapas (`ModPatchSet.ApplyParams/ApplyMaps`).
+3. **Montar o EnemyCatalog e o AreaScaling antes de qualquer troca** (leem os mapas intactos).
+4. Embaralhar os drops (antes do swap, para o chefe novo herdar a recompensa já embaralhada).
+5. Fazer o swap de chefes.
+6. Randomizar os inimigos (excluem os modelos do swap; força ajustada pelo AreaScaling).
+7. Embaralhar os tesouros.
+8. Rodar `EnsureModels` em todo mapa com `Dirty`.
+9. Gravar os mapas `Dirty` e o param. No modo jogo limpo: eventos e textos com os patches, scripts de
+   IA mesclados e efeitos mesclados. No modo legado: copiar os arquivos do pacote do mod.
+10. Gravar os logs, o `seed.txt` e o `configuracao.json`.
 
 ### Regras que não podem quebrar
 
 - **Determinismo / códigos de seed**: use só `Rng`, nunca `System.Random` nem a ordem de um
   `HashSet`/`Dictionary` para sortear. Cada etapa tem um fluxo próprio (`new Rng(seed, "enemies/" + mapa)`,
   `"items/treasures"`, `"bosses/swap"`...). Renomear um fluxo ou mudar a ordem dos sorteios muda o
-  resultado de códigos antigos.
-- **Código BBR1-** = JSON comprimido só com o que difere do padrão. Opção nova com padrão "desligado"
-  mantém os códigos antigos válidos. **Mudar o padrão de uma opção existente muda o significado dos
-  códigos já compartilhados.**
-- Os textos dos logs usam `CultureInfo.InvariantCulture` nas coordenadas (o sistema está em pt-BR, com
-  vírgula decimal).
+  resultado de códigos antigos. O teste `Rng_ValoresConhecidos` trava os valores do gerador.
+- **Código de seed** = JSON comprimido só com o que difere do padrão. `BBR2-` é o atual (inclui a fonte).
+  `BBR1-` (versão anterior) é lido como modo legado e com `ScaleEnemiesToArea` desligado, se o código não
+  disser o contrário. Opção nova com padrão "desligado" mantém os códigos válidos. **Mudar o padrão de
+  uma opção existente muda o significado dos códigos já compartilhados.**
+- **Faixas de IDs novos de NpcParam** (contando para baixo): 899999999 = swap de chefes,
+  879999999 = escalonamento de inimigos. O mod original usava 900000000+ (para cima).
+- Coordenadas nos logs usam `CultureInfo.InvariantCulture` (o sistema está em pt-BR, com vírgula).
 - A pasta de saída só é limpa se estiver vazia ou tiver o marcador `.bloodborne-randomizer-output`.
-- O Unrandomizer nunca apaga: arquivos que não existem no jogo original vão para `removidos/`.
+- O Unrandomizer nunca apaga: o que não existe no jogo original vai para `removidos/`. Com a cópia
+  limpa, ele também tira os restos do mod antigo (`Mod Files/`, `*.bak`).
 
-## Conhecimento sobre os dados (aprendido na engenharia reversa)
+## O que o mod original mudava (resultado do diff, `referencia/analise-mod/`)
 
-**Pacote do mod**
-- Os `.bak` dos mapas são idênticos ao jogo original. Os eventos (`event/*.emevd.dcx`) e o
-  `gameparam` do pacote **já vêm modificados pelo autor** e são necessários. Por isso a base é sempre o
-  pacote do mod, e não o jogo limpo.
-- `Mod Files/NPC Scaling File/Names.txt` + `Sizes.txt` dão o "peso" em memória de cada modelo (cNNNN),
-  usado nos limites de memória. `NPCScalingFile.txt`/`NPCParamsFile.txt` eram usados por uma função de
-  escalonamento que nunca era chamada no original (código morto).
+44 arquivos alterados + 1 novo em relação ao jogo limpo:
+
+| Mudança dos autores | Como fica aqui |
+|---|---|
+| `script/mXX.luabnd`: união dos scripts de IA de todos os mapas (+ m29) em cada pacote, 435 arquivos | `AiScripts` gera a mesma união (435, conferido) e mescla LUAINFO/LUAGNL **sem duplicatas** (os autores duplicavam: 1 KB → 700 KB) |
+| Scripts novos/editados: `551111_battle.lua` (Wet Nurse sem escuridão), `511000_battle.lua` e 4 IAs de cálice | patches (`LuaFiles` + `Blobs`) |
+| `sfx/commoneffects`: efeitos de personagem de todas as áreas (3115 → 4606 arquivos) | `SfxMerge`: .fxr de ID < 10000 ou 600000–699999 + texturas (4982 arquivos, 45 MB; o mod tem 42 MB) |
+| `gameparam`: 25334 linhas NpcParam 900000000+ = 30 variantes de força por inimigo (só muda `spEffectID6`, níveis 7001…7487); `NPCScalingFile` lista base + variantes | `AreaScaling` (cópias sob demanda) |
+| `gameparam`: `spEffectID6` das linhas originais de 293 inimigos trocado para 7487 (força máxima) | **não reproduzido** (era efeito colateral do remapeamento) |
+| `gameparam`: `getSoul` de 28 chefes (no jogo os ecos vêm por evento), NpcThinkParam 551111 novo e 250100 alterado, SpEffect 999999 "BOSS HP", material do 511000 | patches (`ParamRows`/`ParamFields`) |
+| `gameparam`: SpEffect 2010 (buff da lanterna), lote 101552150 (recompensa de Loran), ruído de float do editor | **não reproduzido** |
+| `event/*.emevd`: 108 eventos em 16 arquivos. Quase tudo **remove comandos com script do chefe original** (Force Animation Playback, Request Character AI Command/Re-plan, Create NPC Part...) para chefes trocados não travarem; eventos novos em `common` (agarrão do Moon Presence) e em `m35` (91919191–94: as Living Failures morrem pela vida do controlador e a luta acaba quando a principal morre) | patches (`Events`: o evento inteiro do mod substitui o do jogo) |
+| Mapas: m35 sem 13 inimigos + modelo `l005510` (memória); chefes de cálice reposicionados em `m29_10_90_01` e `m29_31_90_00` | patches (`Maps`) |
+| Texto "Loran Cleric" (NPC 750000) | patches (`Texts`) |
+| `chr/c5110`, `chr/c2560`, `obj/o919900`, `drawparam m29`, textos do "Great One Beast" | **não reproduzido** (o randomizer não usa; GOB é outro mod) |
+| `Names.txt`/`Sizes.txt` | peso = tamanho do `chr/cNNNN.chrbnd.dcx` (idêntico) |
+
+Os patches de eventos são aplicados sempre no modo jogo limpo, para ficar igual ao modo legado que o
+usuário já testou. Isso tira animações de entrada de alguns chefes mesmo sem swap. Uma melhoria
+possível é aplicar os patches de um chefe só quando a arena dele mudar.
+
+## Conhecimento sobre os dados
 
 **SoulsFormats**
 - Os nomes de arquivos dentro dos BND usam `\`, que o `Path` do Linux não separa. Use
-  `ParamBundle.BinderName()`.
+  `ParamBundle.BinderName()` ou corte no último `\`/`/`.
 - `PARAM.Row.ID` é `long`. `ItemLotParam` tem IDs repetidos (use `Index()`, o primeiro vale).
-  `PARAM.Write()` **não ordena** as linhas e o jogo faz busca binária, então use `CloneRow()`, que
-  insere na posição certa.
-- `MSBB.Model.Enemy(template)` copia uma entrada de modelo. Toda parte de inimigo precisa ter o modelo
+  `PARAM.Write()` **não ordena** as linhas e o jogo faz busca binária, então use `CloneRow()`/`AddRow()`.
+- `MSBB.Model.Enemy(template)` copia uma entrada de modelo; toda parte de inimigo precisa ter o modelo
   na tabela do mapa (`EnsureModels`).
-- Em `GameData`, campos estáticos que usam outros (`.. BossNames`) precisam vir **depois** deles no
-  arquivo (ordem de inicialização estática).
+- `EMEVD`: `Events[].Instructions` (Bank, ID, ArgData). Para ler os argumentos, use
+  `referencia/bb-emedf.json` (tipos 0 u8, 1 u16, 2 u32, 3 s8, 4 s16, 5 s32, 6 f32, alinhados).
+  Instruções úteis: 2003[11] Display Boss Health Bar, 2003[12] Handle Boss Defeat, 2004[08] Set SpEffect.
+- Em `GameData`, campos estáticos que usam outros (`.. BossNames`) precisam vir **depois** deles no arquivo.
 
 **Mapas**
 - Variantes do mesmo lugar em momentos diferentes da história: `m23_00_00_00/01`, `m24_00_00_00/01`,
   `m24_01_00_00/01/11`, `m24_02_00_00/01`, `m27_00_00_00/01`, `m28_00_00_00/01`, `m32_00_00_00/01`.
-  Itens e chefes precisam ficar iguais em todas as variantes (já tratado). Os inimigos comuns ainda
-  são sorteados de forma independente em cada variante (possível melhoria).
+  Itens e chefes ficam iguais em todas as variantes; inimigos comuns ainda são sorteados em cada uma.
 - Masmorras de cálice: o sorteio usa os inimigos do `m29_XX_90_00` e a troca acontece no `_01`
   (exceto `m29_21_90_00` e `m29_31_90_00`). Os modelos extras estão em `m29_52_01_00/m29_52_01_91`.
-- Sublocal de uma parte: `Object.CollisionName`/`Enemy.CollisionName` → parte `Collision` →
-  `MapNameID` → FMG de lugares. Tesouro: `PartName2`, depois `PartName`, depois a região `PointName`.
+- Sublocal: `Object.CollisionName`/`Enemy.CollisionName` → `Collision.MapNameID` → FMG de lugares.
+  Tesouro: `PartName2`, depois `PartName`, depois a região `PointName`.
 
-**Textos (.fmg)** — `item.msgbnd`: 10 itens, 11 armas, 12 armaduras, 13 acessórios, 18 nomes de NPC
-(via `NpcParam.nameId`), 19 lugares. `menu.msgbnd`: 31 gemas. Inimigos comuns quase nunca têm nome
-no jogo; a interface mostra "Inimigo cNNNN" com as áreas onde ele aparece.
+**Textos (.fmg)** — `item.msgbnd`: 10 itens, 11 armas, 12 armaduras, 13 acessórios, 18 nomes de NPC (via
+`NpcParam.nameId`), 19 lugares. `menu.msgbnd`: 31 gemas. Inimigos comuns quase nunca têm nome no jogo.
 
-**Itens** — `ItemLotParam.lotItemCategory0X`: 0 arma, 1 armadura, 2 acessório, 4 item, 8 Blood Gem
-(gerada). `EquipParamGoods.goodsType`: 1 = item-chave (chaves, emblemas, insígnias), 6 = cálice.
-Os tesouros com o mesmo lote em variantes diferentes são agrupados antes do embaralhamento.
+**Itens** — `ItemLotParam.lotItemCategory0X`: 0 arma, 1 armadura, 2 acessório, 4 item, 8 Blood Gem.
+`EquipParamGoods.goodsType`: 1 = item-chave, 6 = cálice.
+
+**Força (escalonamento)** — `NpcParam.spEffectID6` com SpEffect 7000–7499 multiplica vida/dano/defesa
+(70xx jogo base, 748x DLC, 73xx cálice); `GameClearSpEffectID` é o de NG+. Inimigo novo herda os dois do
+inimigo que **estava naquele lugar**; reserva: o mais comum entre os nativos do mapa (tabela no log).
+Por mapa não basta: a Cathedral Ward mistura regiões de começo e fim de jogo.
 
 **Chefes**
-- O escalonamento por área fica em `NpcParam.spEffectID6` (SpEffects 70xx no jogo base, 748x no DLC;
-  multiplicam vida/dano/defesa) e em `GameClearSpEffectID` (NG+). No swap, o chefe novo recebe uma
-  **cópia** da sua linha de NpcParam (IDs a partir de 899999999, contando para baixo) com `hp`,
-  `getSoul`, `spEffectID6`, `GameClearSpEffectID` e os lotes de drop do chefe original da arena.
-- As arenas estão em `GameData.BossArenas`: `Phases` são as partes do chefe (Gascoigne
-  c2710/c2720, Ludwig c4510_0000/0002, Orphan c4540/c4541, Micolash c5510_0000/1/2, Maria
-  c4520_0002/0000, Emissary c2500_0000/c2570_0001). A fase i recebe a fase i do chefe novo (ou a
-  última que ele tiver). `Banned`: modelos que travavam naquela arena no original.
-- Estátua inofensiva: NpcParam 252100, IA 252100, modelo c2521 (2 de vida). Substitui os ajudantes das
-  lutas em grupo.
-- IAs especiais ao mudar de arena: Micolash 551000 → IA 551111; 507200 → IA 507200.
-- **Living Failures** fica de fora: a vida é compartilhada pelo controlador `c4030_0004` (IA 1), então
-  outro chefe ali pode deixar a luta sem fim. One Reborn tem IA 0 (controlado por script).
-- A barra de vida mostra o nome definido nos scripts de evento (emevd), então pode continuar com o
-  nome do chefe original. Para corrigir seria preciso editar os eventos (ainda não feito).
+- No swap, o chefe novo recebe uma cópia da sua linha de NpcParam com `hp`, `getSoul`, `spEffectID6`,
+  `GameClearSpEffectID` e os lotes de drop do chefe original da arena.
+- Arenas em `GameData.BossArenas` (`Phases` = partes do chefe na ordem, `Helpers` = ajudantes que viram
+  estátua, `Banned` = modelos proibidos). Gascoigne c2710/c2720, Ludwig c4510_0000/0002, Orphan
+  c4540/c4541, Maria c4520_0002/0000, Emissary c2500_0000/c2570_0001.
+- **c5510 é a Mergo's Wet Nurse** (não o Micolash; c5510_0001/0002 são os clones dela). Micolash usa
+  modelo humano c0000 e não entra no swap. Wet Nurse fora da arena: IA 551000 → 551111 ("sem
+  escuridão", criada pelo mod e incluída nos patches).
+- Living Failures entra no swap (grupo) graças aos eventos m35 do mod; os ajudantes 0001–0003 viram estátua.
+- Estátua: NpcParam 252100, IA 252100, modelo c2521 (2 de vida).
+- A barra de vida mostra o nome definido no evento (2003[11]), então pode continuar com o nome do chefe
+  original da arena (melhoria planejada).
 
 ## Bugs do mod original (já corrigidos aqui; não reintroduzir)
 
@@ -174,29 +213,42 @@ Os tesouros com o mesmo lote em variantes diferentes são agrupados antes do emb
 - "Excluir inimigos" só funcionava com cálice ligado. `m21_01` entrava duas vezes nos itens.
   `"5090"` sem o `c`. A IA 551111 era calculada e nunca aplicada.
 - `new Random()` em todo lugar e campo de seed ignorado. Caminhos fixos com `\`.
+- Força por área num nível fixo por mapa e linhas originais de inimigos alteradas para força máxima.
 
-## O que ainda não foi portado
+## Roteiro (plano aprovado pelo usuário)
 
-As funções estão em `referencia/descompilado/MSB_Test/MainWindow.xaml.cs` (linhas aproximadas):
+**Marco 1 — concluído:** fonte "jogo limpo"; análise do mod (`analyze-mod`); patches embutidos; IA e
+efeitos gerados; escalonamento por lugar; Wet Nurse e Living Failures; códigos BBR2; testes.
+**Falta o usuário testar o modo jogo limpo no jogo.**
 
-| Recurso | Função original |
-|---|---|
-| Lojas | `RandomizeShopItems` (~4055), `ShopLineupParam` |
-| Armas iniciais | `RandomizeStartingWeapons` (~4051) |
-| NPCs | `GenerateNPCList` / `RandomizeNPCs` (~4544–4656) |
-| Golpes de armas | `RandomizeMeleeMoveset` (~6453) / `RandomizeGunMoveset` (~6541) |
-| Escuridão permanente | `PermaDarknessFunction` (~6629), edita `event/common.emevd.dcx` |
-| Times dos inimigos | `TeamTypeRando` (~6815), `NpcParam.teamType` |
-| Chefes extras / Orphan fase 1 | `AddTheRest` (~5197), `AddOrphanPhaseOne` (~4971) |
-| Modo fácil das lutas em grupo | `EasyModes` (~5080), já reaproveitado como `StatueHelpers` |
+Próximos marcos (cada um termina com teste no jogo pelo usuário):
+1. **Paridade e limpeza**: depois do teste, decidir se o modo legado sai. Melhoria possível: aplicar os
+   patches de evento de um chefe só quando a arena dele mudar.
+2. **Lojas e armas iniciais** (`Shops.cs`): portar `RandomizeShopItems`/`RandomizeStartingWeapons`
+   (descompilado, ~4051–4544) sobre `ShopLineupParam` e `CharaInitParam`, mantendo os desbloqueios por
+   insígnia e as opções "manter armas de fogo"/"só armas iniciais". Log em `itens.txt`.
+3. **Nome certo na barra de vida**: no emevd da arena, trocar o `Name ID` da instrução 2003[11] da
+   entidade do chefe pelo `nameId` do chefe novo (dentro do swap).
+4. **Opções caóticas** (aba "Caos", cada uma com o seu fluxo de `Rng`): NPCs (`RandomizeNPCs`), golpes
+   de armas (`RandomizeMelee/GunMoveset`), inimigos brigando entre si (`TeamTypeRando`), sons de IA
+   (`AiSoundParamRandomizer`), rostos (`VfxRandomizer` FaceGen/Face), sangue (`DecalRandomizer`), falas
+   (`TalkRandomizer`), gemas (`GemGenParamRandomizer`, 3/6 efeitos), projéteis (`BulletRandomizer`),
+   escuridão permanente (`PermaDarknessFunction`), armaduras. Revisar cada uma no descompilado.
+5. **Itens-chave com lógica** (`KeyLogic.cs`): tabela de requisitos por tesouro (chaves, chefes, áreas),
+   preenchimento "assumed fill" que garante zerar, e validador `check-logic` na CLI. Só os itens-chave que
+   estão em tesouros.
+6. **Contínuo**: inimigos iguais entre variantes do mesmo mapa; teste no Windows; releases privadas com
+   `gh release create` (os executáveis não cabem no git).
 
-Também seria bom: nomes dos chefes na barra de vida (emevd) e inimigos comuns iguais entre as
-variantes do mesmo mapa.
+Funções do original no descompilado (`referencia/descompilado/MSB_Test/MainWindow.xaml.cs`): lojas
+`RandomizeShopItems` ~4055, armas iniciais ~4051, NPCs ~4544–4656, golpes ~6453/~6541, escuridão
+~6629, times ~6815, chefes extras `AddTheRest` ~5197, Orphan fase 1 ~4971, modo fácil `EasyModes`
+~5080, sons de IA ~8669, sangue ~9837, falas ~9905, projéteis ~9973, rostos ~10053, gemas ~10123.
 
 ## Interface (convenções)
 
-- Todo texto em pt-BR. Toda opção tem uma descrição curta embaixo (`TextBlock Classes="desc"`) e os
-  avisos usam `Classes="warn"`.
+- Todo texto em pt-BR. Toda opção tem uma descrição curta embaixo (`TextBlock Classes="desc"`); avisos
+  usam `Classes="warn"`.
 - Propriedades do `MainViewModel` envolvem `Settings` e chamam `Changed()` para atualizar o código de
   seed. Opção nova = propriedade em `RandomizerSettings` + propriedade no ViewModel + controle no XAML.
 - Configurações da interface: `~/.local/share/BloodborneRandomizer/interface.json` (Windows:
@@ -204,4 +256,6 @@ variantes do mesmo mapa.
 
 ## Créditos
 
-O mod original é de **Sepukkake** e **Smertin123**. A SoulsFormats é de Joseph Anderson (TKGP).
+O mod original é de **Sepukkake** e **Smertin123** (os patches em `Data/modpatches.json` são o trabalho
+deles, guardado como dados). SoulsFormats: Joseph Anderson (TKGP). Tabela de instruções de evento:
+projeto DarkScript3.

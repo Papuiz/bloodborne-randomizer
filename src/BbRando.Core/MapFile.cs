@@ -30,15 +30,15 @@ public sealed class MapFile
             _regions.TryAdd(region.Name, region);
     }
 
-    public static MapFile? Load(ModPack pack, MapDef def)
+    public static MapFile? Load(IGameSource pack, MapDef def)
     {
         if (!pack.Exists(def.RelativePath))
         {
             if (def.Optional)
                 return null;
-            throw new FileNotFoundException($"Mapa não encontrado no pacote do mod: {def.RelativePath}");
+            throw new FileNotFoundException($"Mapa não encontrado: {def.RelativePath}");
         }
-        return new MapFile(def, MSBB.Read(pack.Resolve(def.RelativePath)));
+        return new MapFile(def, MSBB.Read(pack.ReadBytes(def.RelativePath)));
     }
 
     public void Write(string outputDvdRoot)

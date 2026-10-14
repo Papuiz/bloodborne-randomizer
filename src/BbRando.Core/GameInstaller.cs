@@ -1,58 +1,8 @@
-using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
 namespace BbRando.Core;
-
-/// <summary>Cópia limpa do jogo: uma pasta (CUSA.../dvdroot_ps4) ou um .zip com ela dentro.</summary>
-public sealed class VanillaSource : IDisposable
-{
-    readonly string? _dvdRoot;
-    readonly ZipArchive? _zip;
-    readonly Dictionary<string, ZipArchiveEntry> _entries = new(StringComparer.OrdinalIgnoreCase);
-
-    public string Description { get; }
-
-    public VanillaSource(string path)
-    {
-        path = Path.GetFullPath(path);
-        Description = path;
-        if (File.Exists(path) && path.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
-        {
-            _zip = ZipFile.OpenRead(path);
-            foreach (var entry in _zip.Entries)
-            {
-                var name = entry.FullName.Replace('\\', '/');
-                var i = name.IndexOf("dvdroot_ps4/", StringComparison.OrdinalIgnoreCase);
-                if (i >= 0 && !name.EndsWith('/'))
-                    _entries.TryAdd(name[(i + "dvdroot_ps4/".Length)..], entry);
-            }
-            if (_entries.Count == 0)
-                throw new InvalidDataException("O .zip não contém uma pasta dvdroot_ps4.");
-        }
-        else
-        {
-            _dvdRoot = GameInstaller.FindDvdRoot(path)
-                ?? throw new DirectoryNotFoundException($"'{path}' não contém a pasta dvdroot_ps4 do jogo.");
-        }
-    }
-
-    public bool Has(string rel) => _zip != null
-        ? _entries.ContainsKey(rel)
-        : File.Exists(Path.Combine(_dvdRoot!, rel.Replace('/', Path.DirectorySeparatorChar)));
-
-    public void CopyTo(string rel, string destination)
-    {
-        Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
-        if (_zip != null)
-            _entries[rel].ExtractToFile(destination, overwrite: true);
-        else
-            File.Copy(Path.Combine(_dvdRoot!, rel.Replace('/', Path.DirectorySeparatorChar)), destination, overwrite: true);
-    }
-
-    public void Dispose() => _zip?.Dispose();
-}
 
 public sealed record InstallReport(int Copied, int Restored, int Removed, IReadOnlyList<string> Problems, string StateDir);
 
@@ -148,7 +98,11 @@ public static class GameInstaller
             copied++;
         }
         progress?.Report(new Progress(100, "Randomização aplicada ao jogo."));
-        return new InstallReport(copied, 0, 0, [], state);
+        var problems = new List<string>();
+        if (Directory.Exists(Path.Combine(gameDvd, "Mod Files")))
+            problems.Add("A pasta do jogo ainda tem arquivos do randomizer antigo (pasta \"Mod Files\"). " +
+                         "Para não misturar os dois, rode o Unrandomizer com a cópia limpa do jogo e aplique de novo.");
+        return new InstallReport(copied, 0, 0, problems, state);
     }
 
     /// <summary>
@@ -162,12 +116,23 @@ public static class GameInstaller
         var backup = Path.Combine(state, "backup");
         var removedDir = Path.Combine(state, "removidos", DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss"));
         var manifest = LoadManifest(state);
-        using var vanilla = string.IsNullOrWhiteSpace(vanillaPath) ? null : new VanillaSource(vanillaPath);
+        using var vanilla = string.IsNullOrWhiteSpace(vanillaPath) ? null : new VanillaGameSource(vanillaPath);
 
         var targets = new SortedSet<string>(manifest.Files.Keys, StringComparer.OrdinalIgnoreCase);
         if (!string.IsNullOrWhiteSpace(modPackDir) && Directory.Exists(modPackDir))
             foreach (var rel in new ModPack(modPackDir).GameFiles())
                 targets.Add(rel);
+        // Com a cópia limpa, também saem os restos do randomizer antigo (pasta "Mod Files" e backups ".bak"),
+        // que não existem no jogo original.
+        if (vanilla != null)
+            foreach (var file in Directory.EnumerateFiles(gameDvd, "*", SearchOption.AllDirectories))
+            {
+                var rel = Path.GetRelativePath(gameDvd, file).Replace(Path.DirectorySeparatorChar, '/');
+                var leftover = rel.StartsWith("Mod Files/", StringComparison.OrdinalIgnoreCase)
+                               || rel.Contains(".bak", StringComparison.OrdinalIgnoreCase);
+                if (leftover && !vanilla.Exists(rel))
+                    targets.Add(rel);
+            }
         if (targets.Count == 0)
             throw new InvalidOperationException("Nada para desfazer: nenhuma randomização aplicada por este programa foi encontrada.");
 
@@ -180,7 +145,7 @@ public static class GameInstaller
             var saved = Native(backup, rel);
             if (vanilla != null)
             {
-                if (vanilla.Has(rel))
+                if (vanilla.Exists(rel))
                 {
                     vanilla.CopyTo(rel, target);
                     restored++;
@@ -210,6 +175,10 @@ public static class GameInstaller
                 problems.Add($"{rel}: sem cópia original para restaurar (informe a cópia limpa do jogo).");
             }
         }
+
+        var modFiles = Path.Combine(gameDvd, "Mod Files");
+        if (vanilla != null && Directory.Exists(modFiles) && !Directory.EnumerateFileSystemEntries(modFiles, "*", SearchOption.AllDirectories).Any(File.Exists))
+            Directory.Delete(modFiles, recursive: true); // só sobraram pastas vazias
 
         if (problems.Count == 0)
         {

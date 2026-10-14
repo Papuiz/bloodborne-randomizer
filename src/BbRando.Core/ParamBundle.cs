@@ -8,12 +8,12 @@ public sealed class ParamBundle
     readonly BND4 _bnd;
     readonly Dictionary<string, (BinderFile File, PARAM Param)> _params = new(StringComparer.OrdinalIgnoreCase);
 
-    public ParamBundle(ModPack pack)
+    public ParamBundle(IGameSource pack)
     {
-        var defs = BND4.Read(pack.Resolve("paramdef/paramdef.paramdefbnd.dcx")).Files
+        var defs = BND4.Read(pack.ReadBytes("paramdef/paramdef.paramdefbnd.dcx")).Files
             .Select(f => PARAMDEF.Read(f.Bytes))
             .ToList();
-        _bnd = BND4.Read(pack.Resolve("param/gameparam/gameparam.parambnd.dcx"));
+        _bnd = BND4.Read(pack.ReadBytes("param/gameparam/gameparam.parambnd.dcx"));
         foreach (var file in _bnd.Files)
         {
             var param = PARAM.Read(file.Bytes);
@@ -36,6 +36,8 @@ public sealed class ParamBundle
 
     public PARAM this[string name] => _params[name].Param;
 
+    public IReadOnlyCollection<string> Names => _params.Keys;
+
     /// <summary>Linhas por ID. Alguns params têm IDs repetidos; vale a primeira, como no jogo.</summary>
     public Dictionary<long, PARAM.Row> Index(string name)
     {
@@ -57,6 +59,16 @@ public sealed class ParamBundle
         while (used.Contains(id))
             id--;
         var row = new PARAM.Row(source) { ID = id };
+        var index = param.Rows.FindIndex(r => r.ID > id);
+        param.Rows.Insert(index < 0 ? param.Rows.Count : index, row);
+        return row;
+    }
+
+    /// <summary>Linha nova com os valores padrão do paramdef, inserida na ordem dos IDs.</summary>
+    public PARAM.Row AddRow(string name, long id, string rowName)
+    {
+        var param = this[name];
+        var row = new PARAM.Row(id, rowName, param.AppliedParamdef);
         var index = param.Rows.FindIndex(r => r.ID > id);
         param.Rows.Insert(index < 0 ? param.Rows.Count : index, row);
         return row;

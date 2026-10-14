@@ -16,8 +16,8 @@ public sealed class EnemyCatalog
     public List<EnemyKind> Bosses { get; } = new();
     public List<EnemyKind> ChaliceBosses { get; } = new();
 
-    /// <summary>Tamanho (bytes) de cada modelo, dos arquivos Names.txt/Sizes.txt do mod.</summary>
-    public Dictionary<string, long> ModelSizes { get; } = new();
+    /// <summary>Peso (bytes) de cada modelo: o tamanho do chr/cNNNN.chrbnd.dcx.</summary>
+    public Dictionary<string, long> ModelSizes { get; }
 
     /// <summary>Uma entrada de modelo de cada inimigo, para copiar para mapas onde ele não existia.</summary>
     public Dictionary<string, MSBB.Model.Enemy> ModelTemplates { get; } = new();
@@ -25,13 +25,9 @@ public sealed class EnemyCatalog
     readonly Dictionary<string, SortedSet<string>> _modelAreas = new();
     readonly Dictionary<string, string> _modelNames = new();
 
-    public EnemyCatalog(ModPack pack, ParamBundle param, GameText text, IReadOnlyDictionary<string, MapFile> maps)
+    public EnemyCatalog(IGameSource pack, ParamBundle param, GameText text, IReadOnlyDictionary<string, MapFile> maps)
     {
-        var names = pack.ReadDataFile("Names.txt");
-        var sizes = pack.ReadDataFile("Sizes.txt");
-        for (var i = 0; i < Math.Min(names.Length, sizes.Length); i++)
-            if (long.TryParse(sizes[i].Trim(), out var size))
-                ModelSizes.TryAdd(names[i].Trim(), size);
+        ModelSizes = pack.ModelSizes();
 
         var npcRows = param.Index("NpcParam");
         string NameOf(MSBB.Part.Enemy e)
@@ -46,7 +42,7 @@ public sealed class EnemyCatalog
                 ModelTemplates.TryAdd(model.Name, model);
         // Modelos que só existem numa sub-masmorra (o original também lia este arquivo).
         if (pack.Exists("map/mapstudio/m29_52_01_00/m29_52_01_91.msb.dcx"))
-            foreach (var model in MSBB.Read(pack.Resolve("map/mapstudio/m29_52_01_00/m29_52_01_91.msb.dcx")).Models.Enemies)
+            foreach (var model in MSBB.Read(pack.ReadBytes("map/mapstudio/m29_52_01_00/m29_52_01_91.msb.dcx")).Models.Enemies)
                 ModelTemplates.TryAdd(model.Name, model);
 
         foreach (var map in maps.Values.Where(m => m.Def.EnemySource))
@@ -147,6 +143,9 @@ public sealed class EnemyRandomizer(EnemyCatalog catalog, RandomizerSettings set
     /// <summary>Modelos que não podem ser sorteados (no swap: os chefes, para não repetir).</summary>
     public HashSet<string> ExcludedModels { get; init; } = new();
 
+    /// <summary>Ajusta a força do inimigo à área de destino (opção "ScaleEnemiesToArea").</summary>
+    public AreaScaling? Scaling { get; init; }
+
     public void Randomize(MapFile map)
     {
         var area = map.Area;
@@ -234,7 +233,7 @@ public sealed class EnemyRandomizer(EnemyCatalog catalog, RandomizerSettings set
             if (choice == null)
                 continue; // Nada cabe nos limites: o inimigo original fica.
 
-            e.NPCParamID = choice.NpcParam;
+            e.NPCParamID = settings.ScaleEnemiesToArea && Scaling != null ? Scaling.Scale(choice.NpcParam, original.NpcParam, map) : choice.NpcParam;
             // Corrige o original: esse chefe precisa da IA 551111, que era calculada e nunca aplicada.
             e.ThinkParamID = choice.NpcParam == 551000 ? 551111 : choice.ThinkParam;
             e.ModelName = choice.Model;

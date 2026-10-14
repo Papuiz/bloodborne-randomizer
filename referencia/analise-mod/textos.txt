@@ -1,0 +1,18 @@
+=== msg/enggb/item.msgbnd.dcx
+  [10] 6504: "(nada)" → "Great One Beast Chalice"
+  [18] 750000: "Beast-possessed Soul" → "Loran Cleric"
+  [19] 6504: "(nada)" → "Lake of Mud"
+  [19] 504000: "(nada)" → "Lake of Mud "
+  [19] 504700: "(nada)" → "Cursed Lake of Mud "
+  [19] 504701: "(nada)" → "Defiled Lake of Mud "
+  [20] 6504: "(nada)" → "Chalice that breaks a labyrinth seal."
+  [24] 6504: "(nada)" → "A chalice that breaks a labyrinth seal.\n\nWhen used in a ritual, unlock a small, lost memory of the labyrinth.\n\nThe Great One Beast is the ancestor to the Silverbeast of Loran.\nKnown for the blue sparks summoned by it's roar; a power coveted by Archibald and his Spark Hunters."
+=== msg/enggb/menu.msgbnd.dcx
+=== msg/engus/item.msgbnd.dcx
+  [10] 6504: "(nada)" → "Great One Beast Chalice"
+  [19] 6504: "(nada)" → "Lake of Mud"
+  [19] 504000: "(nada)" → "Lake of Mud "
+  [19] 504700: "(nada)" → "Lake of Mud "
+  [19] 504701: "(nada)" → "Lake of Mud "
+  [20] 6504: "(nada)" → "Chalice that breaks a labyrinth seal."
+  [24] 6504: "(nada)" → "A chalice that breaks a labyrinth seal.\n\nWhen used in a ritual, unlock a small, lost memory of the labyrinth.\n\nThe Great One Beast is the ancestor to the Silverbeast of Loran.\nKnown for the blue sparks summoned by it's roar; a power coveted by Archibald and his Spark Hunters."
