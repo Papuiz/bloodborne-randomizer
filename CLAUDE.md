@@ -2,7 +2,8 @@
 
 Randomizador de inimigos, chefes e itens do Bloodborne, multiplataforma (Linux/Windows). Foi reescrito a
 partir do mod da comunidade "Bloodborne Enemy and Item Randomizer" 5.2 (créditos no README), que era
-só para Windows (WPF) e instável. **Repositório privado**: não publique o código nem os binários.
+só para Windows (WPF) e instável. O repositório é **público**: não versione arquivos do jogo, os executáveis
+nem o código descompilado do mod original (fica só na máquina, ignorado pelo git).
 
 O dono do projeto fala português (pt-BR). Responda e escreva textos de interface e logs em português.
 Ele joga com um port nativo para Linux (AppImage `Bloodborne-bbport-x86_64.AppImage`) que lê os
@@ -100,7 +101,8 @@ src/BbRando.App/       interface Avalonia 11.3.22 (MVVM simples, sem toolkit)
 src/BbRando.Cli/       linha de comando; ModAnalysis.cs = diff mod × jogo limpo e exportação dos patches
 tests/BbRando.Tests/   xUnit (CoreTests sempre; GameDataTests com BBR_VANILLA)
 lib/SoulsFormats.dll   formatos da FromSoftware (netstandard2.1), veio do pacote do mod
-referencia/descompilado/   mod original descompilado com ILSpy (só consulta)
+referencia/descompilado/   mod original descompilado com ILSpy (só consulta, fora do git; para gerar:
+                           ilspycmd -p -o referencia/descompilado "<pasta do mod>/MSB Test.exe")
 referencia/analise-mod/    relatórios do diff mod × jogo limpo (resumo, params, eventos, pacotes...)
 referencia/bb-emedf.json   nomes e argumentos das instruções de evento do BB (projeto DarkScript3)
 ```
@@ -261,7 +263,7 @@ Próximos marcos (cada um termina com teste no jogo pelo usuário):
 5. **Itens-chave com lógica** (`KeyLogic.cs`): tabela de requisitos por tesouro (chaves, chefes, áreas),
    preenchimento "assumed fill" que garante zerar, e validador `check-logic` na CLI. Só os itens-chave que
    estão em tesouros.
-6. **Contínuo**: inimigos iguais entre variantes do mesmo mapa; teste no Windows; releases privadas com
+6. **Contínuo**: inimigos iguais entre variantes do mesmo mapa; teste no Windows; releases com
    `gh release create` (os executáveis não cabem no git).
 
 Funções do original no descompilado (`referencia/descompilado/MSB_Test/MainWindow.xaml.cs`): lojas

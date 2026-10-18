@@ -6,7 +6,8 @@ corrigidos. Não precisa mais do mod original: basta uma cópia limpa do jogo (p
 
 ## Como usar
 
-1. Abra `publicado/linux-x64/BloodborneRandomizer` (Linux) ou `publicado/win-x64/BloodborneRandomizer.exe` (Windows).
+1. Gere o executável (veja **Compilar**) e abra `publicado/linux-x64/BloodborneRandomizer` (Linux) ou
+   `publicado/win-x64/BloodborneRandomizer.exe` (Windows). Os executáveis não ficam no git.
 2. Aba **Início**: escolha a cópia limpa do jogo (pasta ou `.zip`), a pasta de saída e a pasta do jogo.
    O modo legado (pasta `dvdroot_ps4` do mod 5.2 como base) fica num painel recolhido.
 3. Ajuste as abas **Inimigos** e **Itens** (cada opção tem uma descrição).
@@ -20,6 +21,9 @@ cada chefe aparece uma única vez. Por padrão o chefe novo herda a força do ch
 e os ajudantes de lutas em grupo viram estátuas.
 
 Os inimigos levados para outra área recebem a força do inimigo que estava naquele lugar.
+
+**Lojas** (aba Itens): os itens de cada loja trocam de lugar, com o preço acompanhando o item, e as armas
+iniciais dos Mensageiros podem ser sorteadas (com requisitos de atributo baixos para qualquer origem).
 
 O **código de seed** (`BBR2-...`) guarda a seed e todas as opções. Quem colar o mesmo código recebe
 exatamente o mesmo jogo. Os códigos `BBR1-` da versão anterior continuam funcionando no modo legado.
@@ -51,12 +55,17 @@ dotnet publish src/BbRando.App -c Release -r win-x64 --self-contained -p:Publish
 - `src/BbRando.App`: interface (Avalonia).
 - `src/BbRando.Cli`: linha de comando, verificação e análise do mod original.
 - `tests/BbRando.Tests`: testes automatizados.
-- `referencia/descompilado`: código do mod original descompilado, só para consulta (não distribuir).
+- `referencia/analise-mod`: relatórios do que o mod original mudava em relação ao jogo limpo.
 
 ## Créditos
 
-- Mod original "Bloodborne Enemy and Item Randomizer": **Sepukkake** e **Smertin123**.
-- SoulsFormats: Joseph Anderson (TKGP).
+- Reescrita multiplataforma: **Papuiz**, com a ajuda do Claude (Anthropic).
+- Mod original "Bloodborne Enemy and Item Randomizer" 5.2: **Sepukkake** e **Smertin123**. A lógica do
+  randomizer vem do trabalho deles, e os ajustes de eventos, scripts de IA, parâmetros e mapas em
+  `src/BbRando.Core/Data/modpatches.json` são deles, guardados como dados.
+- SoulsFormats (`lib/SoulsFormats.dll`): Joseph Anderson (TKGP) e colaboradores.
 - Tabela de instruções de evento (`referencia/bb-emedf.json`): projeto DarkScript3.
+- Interface: Avalonia UI.
 
-Repositório privado, para uso pessoal. Não distribuir.
+Bloodborne é da FromSoftware e da Sony Interactive Entertainment. Este projeto não inclui arquivos do
+jogo: você precisa da sua própria cópia.
