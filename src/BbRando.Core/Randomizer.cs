@@ -77,6 +77,18 @@ public static class Randomizer
             items.RandomizeTreasures(maps.Values);
         }
 
+        var shops = new ShopRandomizer(param, settings, text);
+        if (settings.RandomizeStartingWeapons)
+        {
+            Report(64, "Sorteando as armas iniciais...");
+            shops.RandomizeStartingWeapons();
+        }
+        if (settings.RandomizeShops)
+        {
+            Report(66, "Embaralhando as lojas...");
+            shops.RandomizeLineup();
+        }
+
         foreach (var map in maps.Values.Where(m => m.Dirty))
             ModelTable.EnsureModels(map, catalog, warnings);
 
@@ -113,7 +125,7 @@ public static class Randomizer
         if (pack.Mode == SourceMode.Vanilla)
         {
             Report(90, "Gravando eventos e textos...");
-            patches.WriteEvents(pack, outputDvd);
+            patches.WriteEvents(pack, outputDvd, new BossEvents(pack, maps, bosses.ArenaChanges, settings.StatueHelpers));
             patches.WriteTexts(pack, outputDvd);
             Report(92, "Juntando os scripts de IA...");
             AiScripts.Write(pack, patches, outputDvd);
@@ -125,8 +137,9 @@ public static class Randomizer
         var seedCode = settings.ToSeedCode();
         var logDir = Path.Combine(outputDir, "logs");
         Directory.CreateDirectory(logDir);
-        SpoilerLog.WriteItems(Path.Combine(logDir, "itens.txt"), seedCode, items);
-        SpoilerLog.WriteEnemies(Path.Combine(logDir, "inimigos.txt"), seedCode, enemies, bosses, settings.ScaleEnemiesToArea ? scaling : null, warnings);
+        SpoilerLog.WriteItems(Path.Combine(logDir, "itens.txt"), seedCode, items, shops);
+        SpoilerLog.WriteEnemies(Path.Combine(logDir, "inimigos.txt"), seedCode, enemies, bosses, settings.ScaleEnemiesToArea ? scaling : null, warnings,
+            barNamesFixed: pack.Mode == SourceMode.Vanilla);
         File.WriteAllText(Path.Combine(outputDir, "seed.txt"), seedCode + Environment.NewLine);
         File.WriteAllText(Path.Combine(outputDir, "configuracao.json"), settings.ToJson());
 
@@ -191,7 +204,7 @@ public static class Randomizer
 
 static class SpoilerLog
 {
-    public static void WriteItems(string path, string seedCode, ItemRandomizer items)
+    public static void WriteItems(string path, string seedCode, ItemRandomizer items, ShopRandomizer shops)
     {
         var sb = new StringBuilder();
         sb.AppendLine("BLOODBORNE RANDOMIZER — LOCALIZAÇÃO DOS ITENS");
@@ -199,9 +212,37 @@ static class SpoilerLog
         sb.AppendLine("Coordenadas: [mapa @ x, y, z]. \"Antes\" = o que ficava nesse lugar no jogo normal.");
         sb.AppendLine();
 
-        if (items.Placements.Count == 0 && items.Drops.Count == 0)
+        if (items.Placements.Count == 0 && items.Drops.Count == 0 && shops.Changes.Count == 0 && shops.StartingWeapons.Count == 0)
         {
             sb.AppendLine("Itens não foram randomizados nesta seed.");
+            File.WriteAllText(path, sb.ToString());
+            return;
+        }
+
+        if (shops.StartingWeapons.Count > 0)
+        {
+            sb.AppendLine("==================== ARMAS INICIAIS (Mensageiros) ====================");
+            foreach (var w in shops.StartingWeapons)
+                sb.AppendLine($"    {w.Slot}: {w.Weapon}  (no lugar de {w.Replaced})" +
+                    (w.Requirements != null ? $"  — requisitos For/Hab/San/Arc {w.Requirements}" : ""));
+            sb.AppendLine();
+        }
+
+        if (shops.Changes.Count > 0)
+        {
+            sb.AppendLine("==================== LOJAS ====================");
+            sb.AppendLine("O item novo aparece quando o item antigo apareceria (mesma insígnia/condição). O preço é o do item, na faixa inicial.");
+            foreach (var shop in shops.Changes.GroupBy(c => c.Shop))
+            {
+                sb.AppendLine($"--- {shop.Key} ---");
+                foreach (var c in shop)
+                    sb.AppendLine($"    {c.Item}  ({c.Price} {c.Currency})  ←  no lugar de {c.Replaced}");
+                sb.AppendLine();
+            }
+        }
+
+        if (items.Placements.Count == 0 && items.Drops.Count == 0)
+        {
             File.WriteAllText(path, sb.ToString());
             return;
         }
@@ -230,7 +271,8 @@ static class SpoilerLog
 
     static string Label(EnemyKind? k) => k == null ? "?" : k.Name == k.Model ? k.Model : $"{k.Name} ({k.Model})";
 
-    public static void WriteEnemies(string path, string seedCode, EnemyRandomizer enemies, BossSwapper bosses, AreaScaling? scaling, List<string> warnings)
+    public static void WriteEnemies(string path, string seedCode, EnemyRandomizer enemies, BossSwapper bosses, AreaScaling? scaling, List<string> warnings,
+        bool barNamesFixed)
     {
         var sb = new StringBuilder();
         sb.AppendLine("BLOODBORNE RANDOMIZER — INIMIGOS");
@@ -242,7 +284,9 @@ static class SpoilerLog
             sb.AppendLine("Arena (onde fica)  →  chefe que você vai enfrentar lá");
             foreach (var s in bosses.Swaps)
                 sb.AppendLine($"    Arena de {s.Arena} ({s.AreaName})  →  {s.Now}");
-            sb.AppendLine("Obs.: a barra de vida pode mostrar o nome do chefe original da arena.");
+            sb.AppendLine(barNamesFixed
+                ? "A barra de vida mostra o nome do chefe novo (exceto nas masmorras de cálice)."
+                : "Obs.: a barra de vida pode mostrar o nome do chefe original da arena.");
             sb.AppendLine();
         }
         sb.AppendLine($"Inimigos trocados: {enemies.Swaps.Count}  (★ = chefe no lugar de inimigo comum)");

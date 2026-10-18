@@ -89,7 +89,9 @@ src/BbRando.Core/      lógica (sem interface)
   MapFile.cs           um .msb carregado + Describe() (área/sublocal/coordenadas); flag Dirty
   Enemies.cs           EnemyCatalog (pools), EnemyRandomizer, ModelTable.EnsureModels
   BossSwap.cs          modo swap (permutação de chefes entre arenas + ajuste de força)
+  BossEvents.cs        quais patches de evento entram (só arenas trocadas) + nome na barra de vida
   Items.cs             ItemCatalog (conteúdo dos lotes) e ItemRandomizer (tesouros e drops)
+  Shops.cs             ShopRandomizer: lojas (ShopLineupParam) e armas iniciais dos Mensageiros
   Randomizer.cs        pipeline completo + escrita dos logs (SpoilerLog)
   Settings.cs          RandomizerSettings + código de seed BBR2- (lê BBR1-)
   GameInstaller.cs     Aplicar no jogo / Unrandomizer (backups, manifesto, cópia limpa)
@@ -110,7 +112,7 @@ A ordem do pipeline (`Randomizer.Run`) importa:
 4. Embaralhar os drops (antes do swap, para o chefe novo herdar a recompensa já embaralhada).
 5. Fazer o swap de chefes.
 6. Randomizar os inimigos (excluem os modelos do swap; força ajustada pelo AreaScaling).
-7. Embaralhar os tesouros.
+7. Embaralhar os tesouros. Depois: armas iniciais e lojas (só mexem no param).
 8. Rodar `EnsureModels` em todo mapa com `Dirty`.
 9. Gravar os mapas `Dirty` e o param. No modo jogo limpo: eventos e textos com os patches, scripts de
    IA mesclados e efeitos mesclados. No modo legado: copiar os arquivos do pacote do mod.
@@ -152,9 +154,18 @@ A ordem do pipeline (`Randomizer.Run`) importa:
 | `chr/c5110`, `chr/c2560`, `obj/o919900`, `drawparam m29`, textos do "Great One Beast" | **não reproduzido** (o randomizer não usa; GOB é outro mod) |
 | `Names.txt`/`Sizes.txt` | peso = tamanho do `chr/cNNNN.chrbnd.dcx` (idêntico) |
 
-Os patches de eventos são aplicados sempre no modo jogo limpo, para ficar igual ao modo legado que o
-usuário já testou. Isso tira animações de entrada de alguns chefes mesmo sem swap. Uma melhoria
-possível é aplicar os patches de um chefe só quando a arena dele mudar.
+No modo jogo limpo, `BossEvents` só aplica os patches de evento das **arenas que mudaram de chefe**
+(arena que ficou igual mantém o evento original, com animação de entrada). Como decide:
+- cada evento é ligado às arenas pelas entidades que cita (fases, ajudantes e `Extras` de `BossArena`);
+  eventos do mesmo arquivo que citam as mesmas entidades de 7 dígitos (ex.: geradores 35038xx das Living
+  Failures) são decididos juntos; evento sem arena entra se alguma arena daquele arquivo mudou
+  (`common`: se alguma arena mudou);
+- construtores (evento 0/50): o mod só acrescenta `Initialize Event` (2000[0]) e `Set Event Flag`
+  (2003[2]); cada linha segue o evento iniciado, ou o evento com o mesmo número da flag, ou o mapa do
+  número (1 AA B xxxx → mAA_0B). As flags 1AAB1802/1702 ligadas no m24_01 têm o número dos eventos de
+  entrada dos chefes (parecem marcar a entrada como já vista);
+- arquivo que fica igual ao do jogo não é gravado (sem swap não sai nenhum `.emevd`).
+Com todas as arenas trocadas o resultado é igual ao mod (teste). O modo legado continua copiando tudo.
 
 ## Conhecimento sobre os dados
 
@@ -185,6 +196,15 @@ possível é aplicar os patches de um chefe só quando a arena dele mudar.
 **Itens** — `ItemLotParam.lotItemCategory0X`: 0 arma, 1 armadura, 2 acessório, 4 item, 8 Blood Gem.
 `EquipParamGoods.goodsType`: 1 = item-chave, 6 = cálice.
 
+**Lojas (ShopLineupParam)** — centena de milhar do ID = loja (1 Mensageiros, 2 insight, 5 e 6 lojas
+secundárias com consumíveis/Uncanny/Lost/cálices Sinister); dezena de milhar = faixa de preço (1: 0–4;
+5 e 6: 1–4). Todas as faixas têm os mesmos itens e flags, só o `value` muda. Campos: `equipId`, `value`,
+`eventFlag` (marca "já comprado" dos itens únicos), `qwcId` (desbloqueio: insígnia), `sellQuantity`
+(-1 = sem limite), `shopType` (0 ecos, 5 insight), `equipType` (0 arma, 1 armadura, 3 item). Linhas
+2000–2002/2010–2011 = armas grátis do começo; `1` e `9000xx` são de teste. **CharaInitParam não define arma
+inicial no BB.** `EquipParamWeapon`: `right/leftHandEquipable`; requisitos em `properStrength/Agility/
+Magic/Faith` (For/Hab/Sangue/Arcano); cada nível +n é uma linha (ID + 100·n); Uncanny/Lost = +10000/+20000.
+
 **Força (escalonamento)** — `NpcParam.spEffectID6` com SpEffect 7000–7499 multiplica vida/dano/defesa
 (70xx jogo base, 748x DLC, 73xx cálice); `GameClearSpEffectID` é o de NG+. Inimigo novo herda os dois do
 inimigo que **estava naquele lugar**; reserva: o mais comum entre os nativos do mapa (tabela no log).
@@ -201,8 +221,12 @@ Por mapa não basta: a Cathedral Ward mistura regiões de começo e fim de jogo.
   escuridão", criada pelo mod e incluída nos patches).
 - Living Failures entra no swap (grupo) graças aos eventos m35 do mod; os ajudantes 0001–0003 viram estátua.
 - Estátua: NpcParam 252100, IA 252100, modelo c2521 (2 de vida).
-- A barra de vida mostra o nome definido no evento (2003[11]), então pode continuar com o nome do chefe
-  original da arena (melhoria planejada).
+- Barra de vida = instrução 2003[11] (on, entidade, slot, nome) com valores diretos no jogo base (nas
+  masmorras de cálice vem por parâmetro: não tratado). O nome **não** é sempre o `nameId` da NpcParam
+  (Gehrman 804000, Shadows 212010/20/30, Wet Nurse 0): `BossEvents` usa o nome que a barra do chefe novo
+  tem na arena dele, por fase. Barras em ajudantes que viraram estátua são desligadas; na Wet Nurse a única
+  barra está no clone c5510_0002 e passa para c5510_0000. One Reborn: barra na parte invisível
+  `c1050_0120`; Living Failures: no controlador `c4030_0004` (os dois em `Extras`).
 
 ## Bugs do mod original (já corrigidos aqui; não reintroduzir)
 
@@ -222,13 +246,13 @@ efeitos gerados; escalonamento por lugar; Wet Nurse e Living Failures; códigos 
 **Falta o usuário testar o modo jogo limpo no jogo.**
 
 Próximos marcos (cada um termina com teste no jogo pelo usuário):
-1. **Paridade e limpeza**: depois do teste, decidir se o modo legado sai. Melhoria possível: aplicar os
-   patches de evento de um chefe só quando a arena dele mudar.
-2. **Lojas e armas iniciais** (`Shops.cs`): portar `RandomizeShopItems`/`RandomizeStartingWeapons`
-   (descompilado, ~4051–4544) sobre `ShopLineupParam` e `CharaInitParam`, mantendo os desbloqueios por
-   insígnia e as opções "manter armas de fogo"/"só armas iniciais". Log em `itens.txt`.
-3. **Nome certo na barra de vida**: no emevd da arena, trocar o `Name ID` da instrução 2003[11] da
-   entidade do chefe pelo `nameId` do chefe novo (dentro do swap).
+1. **Paridade e limpeza**: depois do teste, decidir se o modo legado sai. Patches de evento só nas arenas
+   trocadas — **feito, falta teste no jogo**.
+2. **Lojas e armas iniciais** (`Shops.cs`) — **feito, falta teste no jogo**: permutação por loja e tipo,
+   preço/limite/flag de compra vão com o item, desbloqueio fica no lugar, mesmo mapeamento em todas as
+   faixas; armas iniciais sorteadas por mão (direita/esquerda) com requisitos baixados para os da arma
+   original. Fluxos `shops/lineup` e `shops/starting`. Log em `itens.txt`.
+3. **Nome certo na barra de vida** — **feito (modo jogo limpo), falta teste no jogo**. Cálices ainda não.
 4. **Opções caóticas** (aba "Caos", cada uma com o seu fluxo de `Rng`): NPCs (`RandomizeNPCs`), golpes
    de armas (`RandomizeMelee/GunMoveset`), inimigos brigando entre si (`TeamTypeRando`), sons de IA
    (`AiSoundParamRandomizer`), rostos (`VfxRandomizer` FaceGen/Face), sangue (`DecalRandomizer`), falas

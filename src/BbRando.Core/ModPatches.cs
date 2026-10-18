@@ -83,28 +83,62 @@ public sealed class ModPatchSet
         }
     }
 
-    /// <summary>Grava os .emevd com os eventos ajustados.</summary>
-    public void WriteEvents(IGameSource source, string outputDvdRoot)
+    /// <summary>
+    /// Grava os .emevd com os eventos ajustados. Com <paramref name="bosses"/>, só entram os ajustes das
+    /// arenas que mudaram de chefe e as barras de vida recebem o nome do chefe novo; arquivo que fica
+    /// igual ao do jogo não é gravado.
+    /// </summary>
+    public void WriteEvents(IGameSource source, string outputDvdRoot, BossEvents? bosses = null)
     {
-        foreach (var (rel, patches) in Events)
+        var files = new Dictionary<string, (EMEVD Emevd, List<(EMEVD.Event Patched, EMEVD.Event? Original)> Events)>();
+        foreach (var rel in Events.Keys.Concat(bosses?.Files ?? []).Distinct())
         {
             if (!source.Exists(rel))
                 continue;
             var emevd = EMEVD.Read(source.ReadBytes(rel));
-            foreach (var patch in patches)
+            var events = Events.GetValueOrDefault(rel, [])
+                .Select(p => p.ToEvent())
+                .Select(ev => (ev, (EMEVD.Event?)emevd.Events.FirstOrDefault(e => e.ID == ev.ID)))
+                .ToList();
+            files[rel] = (emevd, events);
+        }
+        var decisions = bosses?.Decide(files.ToDictionary(f => f.Key, f => f.Value.Events));
+        var byId = decisions == null ? null : BossEvents.ById(decisions);
+
+        foreach (var (rel, (emevd, events)) in files)
+        {
+            var changed = false;
+            foreach (var (ev, original) in events)
             {
-                var ev = patch.ToEvent();
+                var replacement = ev;
+                if (bosses != null)
+                {
+                    if (original != null && bosses.TryMerge(rel, original, ev, byId!, out var merged))
+                        replacement = merged;
+                    else if (!decisions![rel][ev.ID])
+                        continue;
+                }
                 var index = emevd.Events.FindIndex(e => e.ID == ev.ID);
                 if (index >= 0)
-                    emevd.Events[index] = ev;
+                    emevd.Events[index] = replacement;
                 else
-                    emevd.Events.Add(ev);
+                    emevd.Events.Add(replacement);
+                changed |= original == null || !SameEvent(original, replacement);
             }
+            if (bosses != null)
+                changed |= bosses.RenameBars(emevd);
+            if (!changed && bosses != null)
+                continue;
             var path = Path.Combine(outputDvdRoot, rel.Replace('/', Path.DirectorySeparatorChar));
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             emevd.Write(path);
         }
     }
+
+    static bool SameEvent(EMEVD.Event a, EMEVD.Event b) =>
+        a.Instructions.Count == b.Instructions.Count && a.Parameters.Count == b.Parameters.Count
+        && a.Instructions.Zip(b.Instructions).All(p => p.First.Bank == p.Second.Bank && p.First.ID == p.Second.ID
+            && p.First.ArgData.AsSpan().SequenceEqual(p.Second.ArgData));
 
     /// <summary>Grava os textos ajustados (msgbnd).</summary>
     public void WriteTexts(IGameSource source, string outputDvdRoot)

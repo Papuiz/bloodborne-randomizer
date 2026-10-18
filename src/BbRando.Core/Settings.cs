@@ -63,6 +63,16 @@ public sealed class RandomizerSettings
     public bool IncludeWorkshopItems { get; set; }
     public bool RandomizeEnemyDrops { get; set; }
 
+    // ---- Lojas ----
+    /// <summary>Embaralha os itens de cada loja (o preço vai junto com o item; o desbloqueio fica no lugar).</summary>
+    public bool RandomizeShops { get; set; }
+    /// <summary>Troca as armas grátis que os Mensageiros dão no começo.</summary>
+    public bool RandomizeStartingWeapons { get; set; }
+    /// <summary>Mantém a Hunter Pistol e a Hunter Blunderbuss como armas iniciais (e no lugar delas na loja).</summary>
+    public bool KeepStartingGuns { get; set; } = true;
+    /// <summary>Baixa os requisitos das armas iniciais novas para os da arma original, para qualquer origem usar.</summary>
+    public bool EasyStartingWeapons { get; set; } = true;
+
     public double WeightOf(string model) => EnemyWeights.TryGetValue(model, out var w) ? w : 1.0;
 
     public int ChanceOf(string areaId) =>

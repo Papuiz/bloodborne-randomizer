@@ -159,9 +159,32 @@ public static class GameData
     public static readonly IReadOnlySet<int> FixedDropNpc = new HashSet<int> { 252100, 6071 };
 
     /// <summary>
+    /// Lojas da ShopLineupParam (centena de milhar do ID). As 5xxxxx e 6xxxxx vendem consumíveis, Uncanny/Lost
+    /// e os cálices Sinister; não confirmei no jogo qual vendedor abre cada uma.
+    /// </summary>
+    public static readonly IReadOnlyList<(int Series, string Name)> Shops =
+    [
+        (1, "Mensageiros do Sonho do Caçador"),
+        (2, "Loja de insight"),
+        (5, "Loja secundária A (51xxxx)"),
+        (6, "Loja secundária B (61xxxx)"),
+    ];
+
+    /// <summary>Itens que nunca saem do lugar nas lojas: Blood Vial, Quicksilver Bullets e os sinos (multiplayer).</summary>
+    public static readonly IReadOnlySet<int> FixedShopGoods = new HashSet<int> { 1000, 900, 205, 225 };
+
+    /// <summary>Hunter Pistol e Hunter Blunderbuss.</summary>
+    public static readonly IReadOnlySet<int> StartingGuns = new HashSet<int> { 14000000, 6000000 };
+
+    /// <summary>Linhas grátis dos Mensageiros (escolha da primeira arma): Saw Cleaver, Hunter Axe, Threaded Cane, Pistol, Blunderbuss.</summary>
+    public static readonly IReadOnlyList<(int Row, bool Gun)> StartingWeaponRows =
+        [(2000, false), (2001, false), (2002, false), (2010, true), (2011, true)];
+
+    /// <summary>
     /// Arenas de chefe do jogo principal para o modo swap. <c>Phases</c>: partes que formam o chefe
     /// (fases ou partes ligadas, na ordem); <c>Helpers</c>: ajudantes de lutas em grupo;
-    /// <c>Banned</c>: modelos que não podem entrar nessa arena (travavam no original).
+    /// <c>Banned</c>: modelos que não podem entrar nessa arena (travavam no original); <c>Extras</c>: partes
+/// sem luta ligadas aos eventos da arena.
     /// </summary>
     public static readonly IReadOnlyList<BossArena> BossArenas =
     [
@@ -188,11 +211,12 @@ public static class GameData
             Helpers: [.. Enumerable.Range(1, 10).Select(i => $"c2500_{i:0000}")],
             Banned: ["c5100", "c8050", "c4520", "c4500", "c3060"]),
         new("shadows", "Shadow of Yharnam", BossArenaKind.Group, ["m27_00_00_00", "m27_00_00_01"], ["c2120_0000"], Helpers: ["c2120_0001", "c2120_0002"]),
-        new("one_reborn", "The One Reborn", BossArenaKind.Group, ["m28_00_00_00", "m28_00_00_01"], ["c5070_0000"]),
+        // c1050_0120: parte invisível que tem a barra de vida da luta.
+        new("one_reborn", "The One Reborn", BossArenaKind.Group, ["m28_00_00_00", "m28_00_00_01"], ["c5070_0000"], Extras: ["c1050_0120"]),
         // Com os eventos do mod (91919191–94 em m35), a luta termina quando a Failure principal morre e o
         // controlador escondido (c4030_0004) mata as outras pela vida dele.
         new("living_failures", "Living Failures", BossArenaKind.Group, ["m35_00_00_00"], ["c4030_0000"],
-            Helpers: ["c4030_0001", "c4030_0002", "c4030_0003"]),
+            Helpers: ["c4030_0001", "c4030_0002", "c4030_0003"], Extras: ["c4030_0004"]),
     ];
 
     /// <summary>Estátua inofensiva (2 de vida) que o original usava no lugar dos ajudantes no "modo fácil".</summary>
@@ -214,8 +238,10 @@ public enum BossArenaKind
 
 public sealed record BossArena(
     string Id, string Name, BossArenaKind Kind, string[] Maps, string[] Phases,
-    string[]? Helpers = null, string[]? Banned = null)
+    string[]? Helpers = null, string[]? Banned = null, string[]? Extras = null)
 {
     public string[] HelperParts => Helpers ?? [];
+    /// <summary>Partes que não lutam mas pertencem à luta (barra de vida, controlador escondido).</summary>
+    public string[] ExtraParts => Extras ?? [];
     public bool Accepts(string model) => Banned == null || !Banned.Contains(model);
 }

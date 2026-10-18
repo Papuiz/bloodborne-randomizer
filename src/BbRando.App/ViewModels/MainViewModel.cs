@@ -306,6 +306,10 @@ public sealed class MainViewModel : ObservableObject
     public bool IncludeKeyItems { get => Settings.IncludeKeyItems; set { Settings.IncludeKeyItems = value; Changed(); } }
     public bool IncludeWorkshopItems { get => Settings.IncludeWorkshopItems; set { Settings.IncludeWorkshopItems = value; Changed(); } }
     public bool RandomizeEnemyDrops { get => Settings.RandomizeEnemyDrops; set { Settings.RandomizeEnemyDrops = value; Changed(); } }
+    public bool RandomizeShops { get => Settings.RandomizeShops; set { Settings.RandomizeShops = value; Changed(); } }
+    public bool RandomizeStartingWeapons { get => Settings.RandomizeStartingWeapons; set { Settings.RandomizeStartingWeapons = value; Changed(); } }
+    public bool KeepStartingGuns { get => Settings.KeepStartingGuns; set { Settings.KeepStartingGuns = value; Changed(); } }
+    public bool EasyStartingWeapons { get => Settings.EasyStartingWeapons; set { Settings.EasyStartingWeapons = value; Changed(); } }
 
     // ---------------- Execução ----------------
 

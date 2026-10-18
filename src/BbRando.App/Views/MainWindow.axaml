@@ -255,6 +255,22 @@
                 <TextBlock Classes="desc" Text="Os itens que os inimigos soltam ao morrer são trocados entre si. Itens-chave nunca são mexidos aqui (a não ser que a opção acima esteja ligada)." />
               </StackPanel>
             </Border>
+
+            <Border Classes="card">
+              <StackPanel>
+                <TextBlock Classes="h2" Text="Lojas" Margin="0,0,0,8" />
+                <CheckBox Content="Embaralhar itens das lojas" IsChecked="{Binding RandomizeShops}" FontWeight="SemiBold" />
+                <TextBlock Classes="desc" Text="Os itens de cada loja trocam de lugar (arma com arma, roupa com roupa, item com item). O preço vai junto com o item; o que destrava cada lugar (as insígnias) continua igual. Blood Vial, balas, sinos e itens-chave não mudam." />
+                <CheckBox Content="Sortear as armas iniciais" IsChecked="{Binding RandomizeStartingWeapons}" FontWeight="SemiBold" />
+                <TextBlock Classes="desc" Text="Os Mensageiros oferecem 3 armas de truque diferentes no começo do jogo, sorteadas entre as armas vendidas nas lojas." />
+                <StackPanel IsEnabled="{Binding RandomizeStartingWeapons}">
+                  <CheckBox Content="Requisitos de arma inicial" IsChecked="{Binding EasyStartingWeapons}" />
+                  <TextBlock Classes="desc" Text="Baixa os requisitos de atributo da arma sorteada (em todos os níveis) para os da arma que ela substituiu, para qualquer origem conseguir usar. Vale para essa arma no jogo todo." />
+                </StackPanel>
+                <CheckBox Content="Manter Hunter Pistol e Blunderbuss" IsChecked="{Binding KeepStartingGuns}" />
+                <TextBlock Classes="desc" Text="As duas armas de fogo do começo continuam as mesmas, e também não mudam de lugar na loja. Desligado, as armas de fogo iniciais também são sorteadas." />
+              </StackPanel>
+            </Border>
           </StackPanel>
         </ScrollViewer>
       </TabItem>

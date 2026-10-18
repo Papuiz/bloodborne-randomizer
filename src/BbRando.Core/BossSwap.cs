@@ -24,6 +24,9 @@ public sealed class BossSwapper(RandomizerSettings settings, ParamBundle param, 
     public List<BossSwapEntry> Swaps { get; } = new();
     public List<string> Warnings { get; } = new();
 
+    /// <summary>Arena → arena de onde veio o chefe que luta nela agora (só as arenas que mudaram).</summary>
+    public Dictionary<BossArena, BossArena> ArenaChanges { get; } = new();
+
     /// <summary>Modelos dos chefes que entraram no swap (não podem aparecer como inimigo comum).</summary>
     public HashSet<string> SwappedModels { get; } = new();
 
@@ -135,6 +138,8 @@ public sealed class BossSwapper(RandomizerSettings settings, ParamBundle param, 
             Swaps.Add(new BossSwapEntry(arena.Name, arena.AreaName, arena.Name, assignment[a] == a ? $"{boss.Name} (ficou)" : boss.Name));
             if (assignment[a] == a)
                 continue;
+            if (arena.Arena != null && boss.Arena != null)
+                ArenaChanges[arena.Arena] = boss.Arena;
 
             for (var i = 0; i < arena.Parts.Length; i++)
             {
